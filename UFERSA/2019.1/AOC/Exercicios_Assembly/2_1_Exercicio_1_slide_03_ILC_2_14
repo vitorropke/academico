@@ -1,0 +1,30 @@
+#Declarar 3 valores inteiros 'b', 'c' inicializados e 'a' não inicializado. Operar com 'a=(b-3)+c' e imprimir o resultado final
+.data
+	resultado: .asciiz "O resultado final é "	#Declaração de uma string salva na variável 'resultado'
+	b: .word 5					#Declaração da variável 'b' como inteiro com valor 5
+	c: .word 3					#Declaração da variável 'c' como inteiro com valor 2
+	a: .word					#Declaração da variável 'a' como inteiro
+
+.text
+	la $t0, b		#Carrega o endereço de 'b' e coloca no registrador 't0'
+	lw $s1, 0($t0)		#Carrega o valor de 'b'(registrador 't0') e armazena no registrador 's1'
+	
+	la $t0, c		#Carrega o endereço de 'c' e coloca no registrador 't0'
+	lw $s2, 0($t0)		#Carrega o valor de 'c'(registrador 't0') e armazena no registrador 's2'
+	
+	addi $s0, $s1, -3	#O registrador 's0' recebe o valor 2 pois registrador 's1=5'. 5-3=2
+	add $s0, $s0, $s2	#O registrador 's0' recebe o valor 5 pois '2+3=5'. 2 é o resultado anterior de 's0' e 3 é o valor inicializado em 'c(s2)'
+	
+	la $t0, a		#Carrega o endereço de 'a' e coloca no registrador 't0'
+	sw $s0, 0($t0)		#Armazena o valor que está no registrador 's0'(valor 5) em 'a'(registrador 't0')
+	
+	la $a0, resultado	#Carrega o endereço da variável 'resultado' e armazena no registrador 'a0'
+	li $v0, 4		#Chamada de sistema com o código 4(imprimir string)
+	syscall			#Chamada de sistema
+	
+	lw $a0, a		#Carrega o valor de 'a' no registrador 'a0'
+	li $v0, 1		#Chamada de sistema com o código 1(imprimir inteiro)
+	syscall			#Chamado de sistema
+	
+	li $v0, 10		#Chamada de sistema com o código 10(fechar o programa)
+	syscall			#Chamada de sistema

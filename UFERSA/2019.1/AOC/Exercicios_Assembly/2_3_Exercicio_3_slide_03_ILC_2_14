@@ -1,0 +1,37 @@
+#Calcular 'a=b<<2' e 'c=b+b+b+b. Em seguida compare 'a' e 'c'
+.data
+	resultado1: .asciiz "A = C"	#Declaração de uma string salva na variável 'resultado1'
+	resultado2: .asciiz "A != C"	#Declaração de uma string salva na variável 'resultado2'
+	a: .word			#Declaração da variável 'a' como inteiro
+	b: .word 5			#Declaração da variável 'b' como inteiro com valor 5
+	c: .word			#Declaração da variável 'c' como inteiro
+
+.text
+	la $t0, b			#Carrega o endereço de 'b' e coloca no registrador 't0'
+	lw $s1, 0($t0)			#Carrega o valor de 'b'(registrador 't0') e armazena no registrador 's1'
+	
+	sll $s0, $s1, 2			#O registrador 's0' recebe o resultado do deslocamento de 2 bits para esquerda a partir do valor do registrador 's1(b)'
+	
+	la $t0, a			#Carrega o endereço de 'a' e coloca no registrador 't0'
+	sw $s0, 0($t0)			#Armazena o valor que está no registrador 's0(b<<2)' em 'a'(registrador 't0')
+	
+	mul $s2, $s1, 4			#O registrador 's2' recebe o resultado da multiplicação de 'b*4'
+	
+	la $t0, c
+	sw $s2, 0($t0)			#Armazena o valor que está no registrador 's2(b*4)' em 'c'(registrador 't0')
+	
+	beq $s0, $s2, igual
+	
+	la $a0, resultado2		#Carrega o endereço da variável 'resultado2' e armazena no registrador 'a0'
+	li $v0, 4			#Chamada de sistema com o código 4(imprimir string)
+	syscall				#Chamada de sistema
+	j saida				#Pula para o label 'saida'
+	
+	igual:	la $a0, resultado1	#Carrega o endereço da variável 'resultado1' e armazena no registrador 'a0'
+		li $v0, 4		#Chamada de sistema com o código 4(imprimir string)
+		syscall			#Chamada de sistema
+	
+	saida:				#Label 'desigual' caso 'a!=c'
+	
+	li $v0, 10			#Chamada de sistema com o código 10(fechar o programa)
+	syscall				#Chamada de sistema

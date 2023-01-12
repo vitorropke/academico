@@ -1,0 +1,88 @@
+#Começar com 4 variáveis 'n1', 'n2', 'n3' e 'n4'. Ler 3 delas e somá-las. Se o resultado for menor que 21 leia a 4ª variável. Se após a 4ª variável o resultado for menor que 24 imprima que não foi dessa vez
+.data
+	ovalor: .asciiz "O valor "				#Declaração de uma string salva na variável 'ovalor'
+	valores3: .asciiz " atingiu o esperado com 3 valores\n"	#Declaração de uma string salva na variável '3valores'
+	valores4: .asciiz " atingiu a meta com 4 valores\n"	#Declaração de uma string salva na variável '4valores'
+	naofoi: .asciiz "Não foi dessa vez. "			#Declaração de uma string salva na variável 'naofoi'
+	abaixo: .asciiz " está abaixo do esperado\n"		#Declaração de uma string salva na variável 'abaixo'
+	n1: .word						#Declaração da variável 'n1' como inteiro
+	n2: .word						#Declaração da variável 'n2' como inteiro
+	n3: .word						#Declaração da variável 'n3' como inteiro
+	n4: .word						#Declaração da variável 'n4' como inteiro
+
+.text
+	li $v0, 5		#Chamada de sistema com o código 5(ler entrada do teclado)
+	syscall			#Chamada de sistema para ler o teclado
+	add $s1, $v0, $zero	#Copia o valor lido no teclado para o registrador 's1(n1)'
+	
+	li $v0, 5		#Chamada de sistema com o código 5(ler entrada do teclado)
+	syscall			#Chamada de sistema para ler o teclado
+	add $s2, $v0, $zero	#Copia o valor lido no teclado para o registrador 's2(n2)'
+	
+	li $v0, 5		#Chamada de sistema com o código 5(ler entrada do teclado)
+	syscall			#Chamada de sistema para ler o teclado
+	add $s3, $v0, $zero	#Copia o valor lido no teclado para o registrador 's3(n3)'
+	
+	add $s1, $s1, $s2	#n1+n2
+	add $s1, $s1, $s3	#n1+n2+n3 armazenado em 's1'
+	
+	slti $s0, $s1, 21	#Checa 's0' com valor 0 se 's1(n1+n2+n3)' é maior ou igual que 21. Checa 's0' com valor 1 caso contrário
+	
+	bne $s0, $zero, menor
+	
+	la $a0, ovalor		#Carrega o endereço da variável 'ovalor' e armazena no registrador 'a0'
+	li $v0, 4		#Chamada de sistema com o código 4(imprimir string)
+	syscall			#Chamada de sistema
+	
+	add $a0, $s1, $zero	#Carrega o valor de 's1' no registrador 'a0'
+	li $v0, 1		#Chamada de sistema com o código 1(imprimir inteiro)
+	syscall			#Chamado de sistema
+	
+	la $a0, valores3	#Carrega o endereço da variável '3valores' e armazena no registrador 'a0'
+	li $v0, 4		#Chamada de sistema com o código 4(imprimir string)
+	syscall			#Chamada de sistema
+	j saida
+	
+	menor:	li $v0, 5		#Chamada de sistema com o código 5(ler entrada do teclado)
+		syscall			#Chamada de sistema para ler o teclado
+		add $s4, $v0, $zero	#Copia o valor lido no teclado para o registrador 's4(n4)'
+		
+		add $s1, $s1, $s4	#n1+n2+n3+n4 armazenado em 's1'
+		
+		slti $s0, $s1, 24	#Checa 's0' com valor 0 se 's1(n1+n2+n3+n4)' é maior ou igual que 24. Checa 's0' com valor 1 caso contrário
+		
+		bne $s0, $zero, naoconseguiu
+		
+		la $a0, ovalor		#Carrega o endereço da variável 'ovalor' e armazena no registrador 'a0'
+		li $v0, 4		#Chamada de sistema com o código 4(imprimir string)
+		syscall			#Chamada de sistema
+		
+		add $a0, $s1, $zero	#Carrega o valor de 's1' no registrador 'a0'
+		li $v0, 1		#Chamada de sistema com o código 1(imprimir inteiro)
+		syscall			#Chamado de sistema
+		
+		la $a0, valores4	#Carrega o endereço da variável '4valores' e armazena no registrador 'a0'
+		li $v0, 4		#Chamada de sistema com o código 4(imprimir string)
+		syscall			#Chamada de sistema
+		j saida
+		
+		naoconseguiu:	la $a0, naofoi		#Carrega o endereço da variável 'ovalor' e armazena no registrador 'a0'
+				li $v0, 4		#Chamada de sistema com o código 4(imprimir string)
+				syscall			#Chamada de sistema
+				
+				la $a0, ovalor		#Carrega o endereço da variável 'ovalor' e armazena no registrador 'a0'
+				li $v0, 4		#Chamada de sistema com o código 4(imprimir string)
+				syscall			#Chamada de sistema
+				
+				add $a0, $s1, $zero	#Carrega o valor de 's1' no registrador 'a0'
+				li $v0, 1		#Chamada de sistema com o código 1(imprimir inteiro)
+				syscall			#Chamado de sistema
+				
+				la $a0, abaixo		#Carrega o endereço da variável '3valores' e armazena no registrador 'a0'
+				li $v0, 4		#Chamada de sistema com o código 4(imprimir string)
+				syscall			#Chamada de sistema
+	
+	saida:
+	
+	li $v0, 10		#Chamada de sistema com o código 10(fechar o programa)
+	syscall			#Chamada de sistema

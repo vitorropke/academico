@@ -1,0 +1,10 @@
+CREATE DATABASE agenda;
+
+USE agenda;
+
+CREATE TABLE contato(
+codigo INT AUTO_INCREMENT PRIMARY KEY,
+nome VARCHAR(100) NOT NULL,
+email VARCHAR(100),
+telefone VARCHAR(100)
+);

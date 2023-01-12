@@ -1,0 +1,52 @@
+Idade dos 30 estudantes da Turma de Estatística
+
+Dados brutos:
+
+24	23	22	28	35	21	23	23	33	34	33	34	21	31	25
+
+24	21	25	36	26	22	30	32	25	26	31	26	25	35	33
+
+21 -> 3 vezes
+22 -> 2 vezes
+23 -> 3 vezes
+24 -> 2 vezes
+25 -> 4 vezes
+26 -> 3 vezes
+28 -> 1 vez
+30 -> 1 vez
+31 -> 2 vezes
+32 -> 1 vez
+33 -> 3 vezes
+
+36 -> 1 vez
+
+Maior valor = 36
+Menor valor = 21
+
+At = Amplitude total = Maior valor do rol - menor valor do rol
+Maior - menor = 36 - 21 = 15
+
+K = Número de classes
+n = número de valores da amostra.
+K = 1 + 3,33*log(n)
+K = 1 + 3,33*log(30)
+K = 1 + 3,33*1,47
+K = 1 + 4,91
+K = 5,91 = 6 (Arrendondamento)
+
+c = Comprimento da classe
+c = At/K
+c = 15/6
+c = 2.5 = 3 (Arrendondamento)
+
+xi = Ponto médio da classe
+Idades		xi	fi
+
+[21-24)		22,5	8
+[24-27)		25,5	9
+[27-30)		28,5	1
+[30-33)		31,5	4
+[33-36)		34,5	7
+[36-39)		37,5	1
+
+Total			30

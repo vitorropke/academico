@@ -1,0 +1,19 @@
+Q1
+
+		a) LL Grammar é uma gramática livre de contexto que pode ser passado para o LL parser, e este analisa a entrada da esquerda (L de Left) para direita e constrói uma derivação mais à esquerda (Leftmost derivation).
+			Fonte: https://en.wikipedia.org/wiki/LL_grammar
+			
+		b) LR Grammar é uma gramática livre de contexto que pode ser passado para o LR parser, e este analisa a entrada da esquerda (L de Left) para direita e constrói uma derivação mais à direita (Rightmost derivation).
+			Fonte: Intuição baseada na fonte do item anterior.
+			
+		c) LL Parser é um analisador que faz leitura de cima para baixo (top-down), usado para analisar subconjuntos de linguagens livre de contexto. O ‘L’ significa, escaneamento left-to-right (esquerda par direita). O outro ‘L’ quer dizer ( Leftmost derivation), onde a derivação se inicia pela esquerda.
+			Fonte: https://en.wikipedia.org/wiki/LL_parser
+		
+		d) LR Parser é um analisador que faz leitura de baixo para cima (bottom up), usado para analisar grandes classes de gramáticas. O ‘L’ significa, escaneamento left-to-right (esquerda par direita). O ‘R’ quer dizer (Rightmost derivation), onde a derivação se inicia pela direita.
+			Fonte: https://www.javatpoint.com/lr-parser
+
+Q2
+
+		a) LL Grammar só funciona com LL Parser.
+		b) LR Grammar só funciona com LR Parser.
+

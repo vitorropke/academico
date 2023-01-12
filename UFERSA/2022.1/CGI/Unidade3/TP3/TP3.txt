@@ -1,0 +1,15 @@
+raytracing
+pathtracing
+
+texto
+
+
+(mínimo 5 páginas)
+
+o que é
+aplicações
+exemplos
+ilustrações
+desempenho
+estado de arte
+tecnologias/hardware

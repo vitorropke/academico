@@ -1,0 +1,33 @@
+#Operação com a=b+c-(d-e)
+.data
+	resultado: .ascii "O resultado final é "	#Declaração de uma string salva na variável 'resultado'
+	b: .word					#Declaração da variável 'b' como inteiro
+	c: .word					#Declaração da variável 'c' como inteiro
+	d: .word					#Declaração da variável 'd' como inteiro
+	e: .word					#Declaração da variável 'e' como inteiro
+	a: .word					#Declaração da variável 'a' como inteiro
+
+.text
+	addi $t0, $zero, 3	#'t0' é 'b'. Recebe 3
+	addi $t1, $zero, 5	#'t1' é 'c'. Recebe 5
+	add $s0, $t0, $t1	#a=b+c(8=3+5)
+	
+	addi $t0, $zero, 4	#'t0' é 'd'. Recebe 4
+	addi $t1, $zero, 1	#'t1' é 'e'. Recebe 1
+	sub $t0, $t0, $t1	#'t0' é 'd-e(4-1=3)'
+	
+	sub $s0, $s0, $t0	#'s0' é 'a(b+c-(d-e) = 3+5-(4-1) = 5)'. 
+	
+	la $t0, a		#Carrega o endereço de 'a' e coloca no registrador 't0'
+	sw $s0, 0($t0)		#Armazena o valor que está no registrador 's0' em 'a'(registrador 't0')
+	
+	la $a0, resultado	#Carrega o endereço da variável 'resultado' e armazena no registrador 'a0'
+	li $v0, 4		#Chamada de sistema com o código 4(imprimir string)
+	syscall			#Chamada de sistema
+	
+	lw $a0, a		#Carrega o valor de 'a' no registrador 'a0'
+	li $v0, 1		#Chamada de sistema com o código 1(imprimir inteiro)
+	syscall			#Chamado de sistema
+	
+	li $v0, 10		#Chamada de sistema com o código 10(fechar o programa)
+	syscall			#Chamada de sistema

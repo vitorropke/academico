@@ -1,0 +1,38 @@
+#Ler 3 valores sendo 'b', 'c' e 'd'. Operar com 'a=(b+c)-(c+d)' e imprimir o resultado final
+.data
+	resultado: .ascii "O resultado final é "	#Declaração de uma string salva na variável 'resultado'
+	b: .word					#Declaração da variável 'b' como inteiro
+	c: .word					#Declaração da variável 'c' como inteiro
+	d: .word					#Declaração da variável 'd' como inteiro
+	a: .word					#Declaração da variável 'a' como inteiro
+
+.text
+	li $v0, 5		#Chamada de sistema com o código 5(ler entrada do teclado)
+	syscall			#Chamada de sistema para ler o teclado
+	add $s1, $v0, $zero	#Copia o valor lido no teclado para o registrador 's1(b)'
+	
+	li $v0, 5		#Chamada de sistema com o código 5(ler entrada do teclado)
+	syscall			#Chamada de sistema para ler o teclado
+	add $s2, $v0, $zero	#Copia o valor lido no teclado para o registrador 's2(c)'
+	
+	li $v0, 5		#Chamada de sistema com o código 5(ler entrada do teclado)
+	syscall			#Chamada de sistema para ler o teclado
+	add $s3, $v0, $zero	#Copia o valor lido no teclado para o registrador 's3(d)'
+	
+	add $s0, $s1, $s2	#O registrador 's0' recebe a soma de 'b(s1)+c(s2)'
+	add $t0, $s2, $s3	#O registrador 't0' recebe a soma de 'c(s2)+d(s3)'
+	sub $s0, $s0, $t0	#O registrador 's0' recebe a subtração de 's0-t0'. 's0(b+c)-t0(c+d)'
+	
+	la $t0, a		#Carrega o endereço de 'a' e coloca no registrador 't0'
+	sw $s0, 0($t0)		#Armazena o valor que está no registrador 's0' em 'a'(registrador 't0')
+	
+	la $a0, resultado	#Carrega o endereço da variável 'resultado' e armazena no registrador 'a0'
+	li $v0, 4		#Chamada de sistema com o código 4(imprimir string)
+	syscall			#Chamada de sistema
+	
+	lw $a0, a		#Carrega o valor de 'a' no registrador 'a0'
+	li $v0, 1		#Chamada de sistema com o código 1(imprimir inteiro)
+	syscall			#Chamado de sistema
+	
+	li $v0, 10		#Chamada de sistema com o código 10(fechar o programa)
+	syscall			#Chamada de sistema

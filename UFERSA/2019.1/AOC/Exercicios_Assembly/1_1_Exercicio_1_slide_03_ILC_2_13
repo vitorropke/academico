@@ -1,0 +1,15 @@
+#Declarar 2 valores inteiros 'x' e 'y' não inicializados. Fornecer um valor a 'x', incrementar esse valor em 1 e armazenar em 'y'
+.data
+	x: .word		#Declaração da variável 'x' como inteiro
+	y: .word		#Declaração da variável 'y' como inteiro
+
+.text
+	#No início estou utilizando o registrador 's0' para 'x'
+	addi $s0, $zero, 5	#O 'x'(registrador 's0') recebe o valor 5
+	addi $s0, $s0, 1	#O registrador 's0' recebe o valor 6 pois 5+1=6
+	
+	la $t0, y		#Carrega o endereço de 'y' e coloca no registrador 't0'
+	sw $s0, 0($t0)		#Armazena o valor que está no registrador 's0'(valor 6) em 'y'(registrador 't0')
+	
+	li $v0, 10		#Chamada de sistema com o código 10(fechar o programa)
+	syscall			#Chamada de sistema

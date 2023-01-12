@@ -1,0 +1,47 @@
+1. Enuncias as hipóteses H0 e H1
+
+2. Especificar o nível de significância do teste(alpha).
+
+3. Construir a curva com distribuição amostral do estimador mostrando as regiões de rejeição e de aceitação de H0.
+
+4. Calcular a estatística teste
+
+Z = Média - média0
+    --------------
+     desvio padrão
+     -------------
+	sqrt(n)
+
+Z = Média - média0
+    --------------
+     desvio padrão
+     -------------
+	sqrt(n)
+
+Z =       p - p0
+    -------------------
+    sqrt((p0 * q0) / n)
+
+5. Conclusões
+
+Exemplo 1:
+
+1.
+	H0: Média = 40
+	H1: Micro > 40
+
+2.
+	alpha = 5%
+
+3.
+	gráfico
+
+4.
+	Z= Média - média0 (micro0) =	Z = 42,3-40 = 2,65
+	   -----------------------	    -------
+		Desvio padrão		      5,2
+		-------------		    ---------
+		    sqrt(n)		     sqrt(36)
+
+5.
+	Ao nível de 5% de significância rejeita-se H0. Logo média > 40

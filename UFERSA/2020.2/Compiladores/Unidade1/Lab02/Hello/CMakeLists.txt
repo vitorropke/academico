@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.0.0)
+project(Hello)
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_STANDARD 17)
+set(SOURCE_FILES hello.cpp)
+add_executable(hello ${SOURCE_FILES})

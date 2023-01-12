@@ -1,0 +1,16 @@
+Problema sat (satisfatibilidade booleana) é toda expressão booleana que possui um formato:
+
+(a v b v c) ^ (a v b) ^ ... ^ (a v ... v b)
+
+que seja True.
+
+Cada conjunto separado por ^ se chama cláusula e cada caractere se chama literal
+
+3sat -> TODAS as cláusulas DEVEM ter 3 literais
+
+(a v b v c) ^ (a v b v d) ^ ... ^ (a v c v b)
+
+2sat -> TODAS as cláusulas DEVEM ter 2 literais
+nsat -> TODAS as cláusulas DEVEM ter n literais
+
+

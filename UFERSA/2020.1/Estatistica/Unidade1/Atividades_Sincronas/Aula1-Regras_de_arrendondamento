@@ -1,0 +1,12 @@
+Regras de arredondamento:
+
+a) 2,38		= 2,4
+b) 24,65	= 24,6 (6 é par. Não arrendonda.)
+c) 0,351	= 0,4 (3 é ímpar. Arredonda para mais.)
+d) 4,24		= 4,2
+e) 328,35	= 328,4 (3 é ímpar. Arredonda para mais.)
+f) 2,97		= 3
+g) 6,829	= 6,8
+h) 5,550	= 5,6 (5 é ímpar. Arredonda para mais.)
+i) 89,99	= 90
+j) 24,66	= 24,7

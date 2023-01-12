@@ -1,0 +1,10 @@
+/* estilo05.css - Estilos de Cabeçalhos */
+h1 { font-size: 18pt; }
+h2 { font-size: 16pt; }
+h3 { font-size: 14pt; }
+h4 { font-size: 12pt; }
+p { font-size: 10pt; }
+h1, h2, h3, h4, h5, h6 { color: red; }
+p.darkarea { color: white; }
+#coment { background-color: green; }
+table[border="3"] { color: white; }

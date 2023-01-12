@@ -1,0 +1,45 @@
+Fórmulas estatísticas - II Unidade
+
+União - OU - Soma das probabilidades
+
+Intersecção - E - Multiplicação das probabilidades
+
+******************************************************************************
+
+Esperança
+
+	μ = E(x) = Somatório(Frequência * Probabilidade frequência)
+
+	μ = E(x) = Somatório(xi * P(xi)) = x1 * P(x1) + x2 * P(x2) + ... + xn * P(xn)
+
+
+Variância
+
+	σ² = Somatório(xi² * P(xi)) = x1² * P(x1) + x2² * P(x2) + ... + xn² * P(xn) - [E(x)]²
+
+	σ² = E(X²) - [E(x)]²
+
+
+Desvio padrão
+
+	σ = √Variância
+
+	σ = √σ²
+
+
+Coeficiente de variação
+
+	CV = Desvio padrão
+	     ------------- * 100
+	       esperança
+
+	CV = σ			      σ
+	    ---- * 100 OU	CV = --- * 100
+	    E(x)		      μ
+
+
+Distribuição binomial
+
+	p + q = 1
+
+	P(X = x) = nCx * p^x * q^(n-x)

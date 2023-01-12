@@ -1,0 +1,36 @@
+Q1
+
+	Legenda:
+		alphanumspec = alphanumeric + special characters
+		OT = open tag
+		CT = close tag
+		OB = open bold
+		CB = close bold
+		BL = break line
+		OL = open link
+		CL = close link
+		imgsrc = image source
+		linkref = link reference
+		linksrc = link source
+
+	Linha 1:
+		<alphanumspec,"Aqui está uma foto da "> <OT> <OB> <CT>
+		<alphanumspec,"minha casa"> <OT> <CB> <CT> <alphanumspec,":">
+
+	Linha 2:
+		<OT> <img> <src> <equal> <imgsrc> <CT> <BL>
+
+	Linha 3:
+		<alphanumspec,"Veja "> <OT> <OL> <linkref> <equal> <linksrc> <CT>
+		<alphanumspec,"mais fotos"> <OT> <CL> <CT> <alphanumspec," se gostar dessa.">
+
+
+Q2
+
+	minutos		->	00 | 01 | 02 | 03 | ... | 59
+	meridiem	->	AM | PM
+	horas12		->	01 | 02 | 03 | 04 | ... | 12
+	horas24		->	00 | 01 | 02 | 03 | ... | 24
+	horario12	->	horas12:minutos meridiem
+	horario24	->	horas24:minutos
+	horario		->	horario12 | horario24

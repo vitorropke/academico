@@ -1,0 +1,23 @@
+a
+
+	FIRST(0) = { 0 }
+	FIRST(1) = { 1 }
+	FIRST(01) = { 01 }
+	
+	FIRST(S) = { 01 }
+	FIRST(0 S 1) = { 0 }
+	
+	FOLLOW(S) = { $, 1 }
+
+b
+
+	FIRST(a) = { a }
+	FIRST(+) = { + }
+	FIRST(-) = { - }
+	
+	FIRST(S) = { a }
+	FIRST(+SS) = { + }
+	FIRST(-SS) = { - }
+	
+	FOLLOW(S) = { $, a }
+

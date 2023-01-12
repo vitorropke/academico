@@ -1,0 +1,348 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+			"http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title> 
+			TODAS AS AULAS 1º SEMESTRE <!-- Isto é um comentário HTML-->
+		</title>
+		<meta charset="UTF-8">
+		<meta name="author" content="Vitor Oliveira">
+		<meta name="description" content="Aula de Autoria Web">
+		<meta name="keywords" content="sites, web, desenvolvimento">
+		<style type="text/css">
+			body {
+				color: red;
+				font-size: 80%;
+			}
+			h1 {
+				font-family: verdana;
+				text-align: center;
+			}
+			p {
+				color: red;
+				font-size: 160%;
+				border: 1px solid powderblue;
+				padding: 30px;
+				line-height: 20px;
+				font-family: verdana;
+				padding-top: 10px;
+				padding-right: 10px;
+				padding-left: 10px;
+			div {
+				border: 1px solid black;
+				background-color: lightblue;
+				padding-top: 50px;
+				padding-right: 30px;
+				padding-bottom: 50px;
+				padding-left: 80px;
+				padding: 50px 30px 50px 80px;
+			}
+		</style>
+		<!--Sempre coloque o script no head-->
+		<!--A linha abaixo invoca um JavaScript para 
+		trocar a figura do site por uma lampada acesa quando 
+		o internauta clicar na imagem da lampada apagada -->
+		<script type="text/javascript" src="MyScript.js">
+			function ligar() {
+				window.document.getElementById("lampada").src="lampadaON.jpg";
+				}
+		</script>
+		<!--Importa o CSS de um arquivo separado-->
+		<link rel="stylesheet" type="text/css" href="aula.css" media="all" />
+		<link rel="stylesheet" type="text/css" href="estilo05.css" media="all" />
+		<link rel="stylesheet" type="text/css" href="aula7.css" media="all" />
+	</head>
+	<body style="background-color:powderblue;">
+		<!--Corpo do HTML-->
+		<!-- Inicialmente a figura do site é de uma lâmpada apagada -->
+		<b> SEJA BEM VINDO AO MEU SITE </b>
+		<img id="lampada" onclick="ligar()" src="lampadaOFF.jpg" />
+		<!-- SLIDE AULA02-->
+		<h1>Minha Primeira Página</h1>
+		<p>Meu Primeiro Parágrafo.</p>
+		<p>W3Schools is a web developer's site.</p>
+		<img src="imagem.jpg" width="104" height="142">
+		<br>
+		<a href="https://www.w3schools.com">This is a link</a>
+		<h1> Heading 1 </h1>
+		<h2> Heading 2 </h2>
+		<h3> Heading 3 </h3>
+		<h4> Heading 4 </h4>
+		<h5> Heading 5 </h5>
+		<h6> Heading 6 </h6>
+		<p> texto </p>
+		<a href="http://www.ifrn.edu.br">IFRN</a>
+		<ol>
+			Lista ordenada
+			<li> Item 1 </li>
+			<li> Item 2 </li>
+			<li> Item 3 </li>
+		</ol>
+		<ul>
+			Lista não ordenada
+			<li> Item 1 </li>
+			<li> Item 2 </li>
+			<li> Item 3 </li>
+		</ul>
+		<font> FONTE </font> <br>
+		<em> ENFATIZADO </em> <br>
+		<strong> FORTE </strong> <br>
+		<code> CIFRA </code> <br>
+		<kbd> ENTRADA DE TECLADO </kbd> <br>
+		<var> VARIÁVEL </var> <br>
+		<samp> AMOSTRA </samp> <br>
+		<cite> CITAÇÃO </cite> <br>
+		<i> ITÁLICO </i> <br>
+		<u> SUBLINHADO </u>
+		<pre> PREDEFINIDO </pre> <br>
+		<p> PARÁGRAFO </p> <br>
+		<s> CORTADO </s> <br>
+		<big> GRANDE </big> <br>
+		<small> PEQUENO </small> <br>
+		<blink> PISCAR </blink> <br>
+		<marquee> MARQUISE </marquee> <br>
+		<table border="1" align="center">
+			<tr>
+				<td> </td>
+				<td> <strong> Cabeçalho </strong> </td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td> Célula 1.1 </td>
+				<td> </td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td> Célula 2.1 </td>
+				<td> Célula 2.2 </td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td> Célula 3.1 </td>
+				<td> Célula 3.2 </td>
+				<td> Célula 3.3 </td>
+			</tr>
+		</table>
+		<form action="mailto: vitorropke@hotmail.com" method="post" enctype="text/plain">
+			Nome <input type="text" name="nome" size="30" maxlength="100" placeholder="Coloque aqui seu nome"> <br>
+			E-mail <input type="text" name="email" size="25" maxlength="100" placeholder="Coloque aqui seu e-mail"> <br>
+			Cidade <input type="text" name="cidade" size="20" maxlength="60" placeholder="Coloque aqui sua cidade"> <br>
+			Gênero <br> <input type="radio" name="sexo" value="Masculino"> Masculino <br>
+			<input type="radio" name="sexo" value="Feminino"> Feminino <br> <br>
+			Frequência que você programa? <br>
+			<select name="utilização">
+				<option value="1"> Várias vezes por dia </option>
+				<option value="2"> Uma vez por dia </option>
+				<option value="3"> Várias vezes por semana </option>
+				<option value="4"> Várias vezes por mês </option>
+			</select>
+			<br> <br>
+			Conte como a programação mudou a sua vida :) <br>
+			<textarea cols="50" rows="5" name="comentários"></textarea> <br> <br>
+			<input type="checkbox" name="receber_info">
+			Desejo receber notificação sobre cursos de programação <br> <br>
+			<input type="submit" value="Enviar formulário"> <br> <br>
+			<input type="Reset" value="Apagar tudo">
+		</form>
+		<img> IMAGEM </img>
+		<div> CSS div </div>
+		<!--A marca <applet> define um applet incorporado-->
+		<applet> MINIAPLICATIVO </applet>
+		<br>
+		<embed> EMBUTIR </embed>
+		<!--Use a tag <hr> para definir uma mudança temática no conteúdo-->
+		<hr>
+		<!--HUEHUEHUEHUE. Use esta tag para quebrar a página que nem um vidro véi-->
+		<br>
+		<center> CENTRALIZAR </center>
+		<blockquote> BLOCO DE CITAÇÃO </blockquote>
+		<address> ENDEREÇO </address>
+		<frame> QUADRO </frame>
+		<!-- SLIDE AULA03 -->
+		<p>I am normal</p>
+		<p style="color:red;"> I am red </p>
+		<p style="color:blue;"> I am blue </p>
+		<p style="font-size:36px;"> I am big </p>
+		<h1> This is a heading </h1>
+		<p> This is a paragraph. </p>
+		<h1 style="color:blue;"> This is a heading </h1>
+		<p style="color:red;"> This is a paragraph. </p>
+		<h1 style="font-family:verdana;"> This is a heading </h1>
+		<p style="font-family:courier;"> This is paragraph. </p>
+		<h1 style="font-size:300%;"> This is a heading </h1>
+		<p style="font-size:160%;"> This is paragraph. </p>
+		<h1 style="text-align:center;"> Centered heading </h1>
+		<p style="text-align:center;"> Centered paragraph. </p>
+		<b> texto em negrito </b> <br>
+		<strong> Texto importante </strong> <br>
+		<i> - texto itálico </i> <br>
+		<em> texto enfatizado </em> <br>
+		<mark> texto marcado </mark> <br>
+		<small> Small text </small> <br>
+		<del> Texto excluído </del> <br>
+		<ins> Texto inserido </ins> <br>
+		<sub> Texto de subíndice </sup> <br>
+		<sup> texto do Superscript </sup> <br>
+		<p> <b> This text is bold </b></p>
+		<p> <i> This text is italic </i></p>
+		<p> This is <sub> subscript </sub> and <sup> superscript </sup></p>
+		<h2> HTML <small> Small </small> Formatting </h2>
+		<h2> HTML <mark> Marked </mark> Formatting </h2>
+		<p> My favorite color is <del> blue </del> red. </p>
+		<p> My favorite <ins> color </ins> is red. </p>
+		<p> This is <sub> subscripted </sub> text. </p>
+		<p> This is <sup> superscripted </sup> text. </p>
+		<!-- This is a comment -->
+		<p> This is a paragraph. </p>
+		<!-- Comments are not displayed in the browser -->
+		<h2 style="background-color:red;color:white"> Background-color set by using red </h2>
+		<h2 style="background-color:orange"> Background-color set by using orange </h2>
+		<h2 style="background-color:yellow"> Background-color set by using yellow </h2>
+		<h2 style="background-color:blue;color:white"> Background-color set by using blue </h2>
+		<h2 style="background-color:cyan"> Background-color set by using cyan </h2>
+		<h2 style="background-color:#FF0000;color:#FFFFFF"> Background-color set by using #FF0000 </h2>
+		<h2 style="background-color:#00FF00"> Background-color set by using #00FF00 </h2>
+		<h2 style="background-color:#0000FF"> Background-color set by using #0000FF </h2>
+		<h2 style="background-color:#FFFF00"> Background-color set by using #FFFF00 </h2>
+		<h2 style="background-color:#FF00FF"> Background-color set by using #FF00FF </h2>
+		<h2 style="background-color:#00FFFF"> Background-color set by using #00FFFF </h2>
+		<h2 style="background-color:#000000;color:white"> Background-color set by using #000000 </h2>
+		<h2 style="background-color:#808080;color:white"> Background-color set by using #808080 </h2>
+		<h2 style="background-color:#FFFFFF;"> Background-color set by using #FFFFFF </h2>
+		<h1 style="color:blue;"> This is a Blue Heading </h1>
+		<h1> This is a heading </h1>
+		<p> This is a paragraph. </p>
+		<h1>This is a heading</h1>
+		<p>This is a paragraph.</p>
+		<h1>This is a heading</h1>
+		<p>This is a paragraph.</p>
+		<h1>This is a heading</h1>
+		<p>This is a paragraph.</p>
+		<p>This is a paragraph.</p>
+		<p>This is a paragraph.</p>
+		<h1>This is a heading</h1>
+		<p>This is a paragraph.</p>
+		<p>This is a paragraph.</p>
+		<p>This is a paragraph.</p>
+		<!-- SLIDE AULA04 -->
+		<table border="1" align="center">
+			<thead> <th> CABEÇALHO 1 </th> <th> CABEÇALHO 2 </th> <th> CABEÇALHO 3 </th> </thead>
+			<tr> <td> COLUNA 1.1 </td> <td> COLUNA 1.2 </td> <td> COLUNA 1.3 </td> </tr>
+			<tr> <td> COLUNA 2.1 </td> <td> COLUNA 2.2 </td> <td> COLUNA 2.3 </td> </tr>
+			<tr> <td> COLUNA 3.1 </td> <td> COLUNA 3.2 </td> <td> COLUNA 3.3 </td> </tr>
+			<tfoot> <th> RODAPÉ 1 </th> <th> RODAPÉ 2 </th> <th> RODAPÉ 3 </th> </tfoot>
+		</table>
+		<br>
+		<table border="1" align="center">
+			<tr> <td> <img src="1.jpg" width="200" height="200"> </td> <td> <img src="2.jpg" width="200" height="200"> </td> <td> <img src="3.jpg" width="200" height="200"> </td> </tr>
+			<tr> <td> <img src="4.jpg" width="200" height="200"> </td> <td> <img src="5.jpg" width="200" height="200"> </td> <td> <img src="6.jpg" width="200" height="200"> </td> </tr>
+			<tr> <td> <img src="7.jpg" width="200" height="200"> </td> <td> <img src="8.jpg" width="200" height="200"> </td> <td> <img src="9.jpg" width="200" height="200"> </td> </tr>
+		</table>
+		<br>
+		<table border="1" align="center" width="865px">
+			<tr> <td> <img src="onda-de-choque-explosao.jpg" width="865px"> </td> </tr>
+		</table>
+		<table border="1" align="center" width="865px">
+			<tr>
+				<td>
+					<a href="https://www.falconarmas.com.br/"> PROTEJA-SE DO PERIGO </a> <br> <br>
+					<a href="https://www.ifood.com.br/"> COMPRE AQUI SUA COMIDA </a> <br> <br>
+					<a href="https://www.zapimoveis.com.br/"> COMPRE SUA CASA COM ABRIGO NUCLEAR </a> <br> <br>
+					<a href="http://pt.wikihow.com/Sobreviver-a-um-Apocalipse"> DICAS PARA SOBREVIVER AO APOCALIPSE </a> <br> <br>
+					<a href="https://www.youtube.com/"> SEI LÁ </a> <br>
+				</td>
+				<td>
+					Cenários apocalípticos e/ou pós-apocalípticos são um tema comum na ficção científica e na ficção especulativa, 
+					onde a humanidade sucumbiu a alguma forma de colapso social. Em termos leigos, apocalíptico refere as causas 
+					que levaram à extinção da humanidade, tais como: guerra nuclear, colisão com um meteoro, apocalipse zumbi, 
+					uma pandemia, invasão alienígena, revolta cibernética, singularidade tecnológica, disgenia, fenômenos sobrenaturais, 
+					o julgamento divino, uma mudança climática descontrolada, esgotamento de recursos, colapso ecológico, 
+					ou alguns outros desastres gerais. O pós-apocalíptico é ambientado em um mundo ou civilização após um desastre que destruiu o mundo. 
+					O prazo pode ser imediatamente após a catástrofe, concentrando-se sobre as agruras ou o psicológico dos sobreviventes, 
+					ou bastante mais tarde, muitas vezes incluindo o tema que a existência da civilização pré-catástrofe foi esquecida (ou mistificada). 
+					Histórias pós-apocalípticas muitas vezes ocorrem em um mundo não-tecnológico futuro, ou um mundo onde apenas elementos dispersos da 
+					tecnologia permanecem. O gênero ganhou popularidade após a Segunda Guerra Mundial, quando a possibilidade de aniquilação 
+					global por armas nucleares entrou na consciência pública. No entanto, romances apocalípticos reconhecíveis existiam desde 
+					o primeiro trimestre do século XIX, quando O Último Homem de Mary Shelley, foi publicado.
+				</td>
+			</tr>
+		</table>
+		<table border="1" align="center" width="865px">
+			<tr> <td align="center"> <img src="maxresdefault.jpg" width="865px"> </td> </tr>
+		</table>
+		<!-- SLIDE AULA05 -->
+		<br>
+		<font> FONTE </font> <br>
+		<em> EMFATIZADO </em> <br>
+		<strong> FORTE </strong> <br>
+		<code> CÓDIGO </code> <br>
+		<kbd> KEYBOARD </kbd> <br>
+		<var> VARIÁVEL </var> <br>
+		<samp> AMOSTRA </samp> <br>
+		<cite> CITAÇÃO </cite> <br>
+		<i> ITÁLICO </i>
+		<hr> QUEBRA </hr> <br>
+		<u> SUBLINHADO </u>
+		<pre> PREDEFINIDO </pre>
+		<p> PARÁGRAFO </p>
+		<s> CORTADO </s> <br>
+		<sub> SUBSCRITO </sub> <br>
+		<big> GRANDE </big> <br>
+		<small> PEQUENO </small> <br>
+		<blink> PISCAR </blink>
+		<marquee> MARQUISE </marquee>
+		<br> QUEBRA DE LINHA </br>
+		<hr> RÉGUA NA PÁGINA </hr>
+		<marquee> ANÚNCIO </marquee>
+		<pre> FORMATAÇÃO ORIGINAL </pre>
+		<u> SUBLINHADO </u> <br>
+		<s> TACHADO/RISCADO </s> <br>
+		<i> ITÁLICO </i> <br>
+		<em> ENFATIZADO </em> <br>
+		NORMAL <sup> SOBRESCRITO </sup> <br>
+		NORMAL <sub> SUBSCRITO </sub> <br>
+		<font face="Verdana" color="GREEN" size="5"> VERDANA </font> <br>
+		<font face="Times New Roman" color="RED" size="3"> TIMES NEW ROMAN </font> <br>
+		<font face="Lucida" color="CYAN" size="6"> LUCIDA </font> <br>
+		<font face="Arial Black" color="BLUE" size="2"> ARIAL BLACK </font> <br>
+		<h1> CABEÇALHO H1 </h1>
+		<h2> CABEÇALHO H2 </h2>
+		<h3> CABEÇALHO H3 </h3>
+		<h4> CABEÇALHO H4 </h4>
+		<h5> CABEÇALHO H5 </h5>
+		<ol>
+			<li> ITEM 1 </li>
+			<li> ITEM 2 </li>
+			<li> ITEM 3 </li>
+			<ul>
+				<li> ITEM 1 </li>
+				<li> ITEM 2 </li>
+				<li> ITEM 3 </li>
+			</ul>
+		</ol>
+		<ul>
+			<li> ITEM 1 </li>
+			<li> ITEM 2 </li>
+			<li> ITEM 3 </li>
+		</ul>
+		<!-- SLIDE AULA06 -->
+		<h1 style="color: blue;"> AZUL ESCURO </h1>
+		<h2 style="color: red;"> VERMELHO </h2>
+		<h3 style="color: pink;"> ROSA </h3>
+		<h4 style="color: cyan;"> AZUL CLARO </h4>
+		<h5 style="color: green;"> VERDE </h5>
+		<h1> TESTE </h1>
+		<h2> Using individual padding properties </h2>
+		<div> This div element has a top padding of 50px, a right padding of 30px, a bottom padding of 50px, and a left padding of 80px. </div>
+		<h2> Using the padding shorthand property </h2>
+		<div> This div element has a top padding of 50px, a right padding of 30px, a bottom padding of 50px, and a left padding of 80px. </div>
+		<p class="darkarea"> TEXTO BRANCO </p>
+		<h3 id="coment"> Isso é um comentário </h3>
+		<table border="3">
+			<tr> <td> 1 </td> <td> 2 </td> <td> 3 </td> </tr>
+		</table>
+		<p class="box1"> BOX1 </p>
+		<p class="box2"> BOX2 </p>
+		<p class="box3"> BOX3 </p>
+	</body>
+</html>

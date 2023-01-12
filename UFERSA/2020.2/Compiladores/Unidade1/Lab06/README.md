@@ -1,0 +1,1 @@
+Alterações feitas da linha 27 até a linha 83. O 'saltador de espaços em branco' teve que ser duplicado e colocado após o saltador de comentários, pois o comentário  estilo '/**/' estava deixando um '\n' residual e poderia deixar mais caracteres em branco além desse, dependendo da entrada.
