@@ -66,8 +66,8 @@ def image_low_pass_filtering(image: np.ndarray[np.uint8], filter_method: int,
     else:
         output: np.ndarray[np.uint8] = np.zeros_like(image)
 
-        for row in range(image.shape[0] - 2):
-            for column in range(image.shape[1] - 2):
+        for row in np.arange(image.shape[0] - 2):
+            for column in np.arange(image.shape[1] - 2):
                 kernel: (list[np.ndarray[np.uint8]] | list[np.ndarray[np.float64]]) = []
                 # valor de preenchimento para máscaras com diferentes números de píxeis
                 if len(image.shape) == 3:
@@ -219,15 +219,16 @@ def image_low_pass_filtering(image: np.ndarray[np.uint8], filter_method: int,
 if __name__ == "__main__":
     input_image: np.ndarray[np.uint8] = cv2.imread("imagens/lena.pgm")
 
-    cv2.imshow("Imagem com filtro de média", image_low_pass_filtering(input_image, 0, 3))
-    cv2.imshow("Imagem com filtro de mediana", image_low_pass_filtering(input_image, 1, 3))
-    cv2.imshow("Imagem com filtro de mínima", image_low_pass_filtering(input_image, 2, 3))
-    cv2.imshow("Imagem com filtro de máxima", image_low_pass_filtering(input_image, 3, 3))
-    cv2.imshow("Imagem com filtro de moda", image_low_pass_filtering(input_image, 4, 3))
-    cv2.imshow("Imagem com filtro do Kuwahara", image_low_pass_filtering(input_image, 5, 3))
-    cv2.imshow("Imagem com filtro do Tomita e Tsuji", image_low_pass_filtering(input_image, 6))
-    cv2.imshow("Imagem com filtro do Nagao e Matsuyama", image_low_pass_filtering(input_image, 7))
-    cv2.imshow("Imagem com filtro do Somboonkaew", image_low_pass_filtering(input_image, 8))
+    cv2.imshow("Imagem com filtro de media", image_low_pass_filtering(input_image, 0, 3))
+    # cv2.imshow("Imagem com filtro de mediana", image_low_pass_filtering(input_image, 1, 3))
+    # cv2.imshow("Imagem com filtro de minima", image_low_pass_filtering(input_image, 2, 3))
+    # cv2.imshow("Imagem com filtro de maxima", image_low_pass_filtering(input_image, 3, 3))
+    # cv2.imshow("Imagem com filtro de moda", image_low_pass_filtering(input_image, 4, 3))
+    # cv2.imshow("Imagem com filtro do Kuwahara", image_low_pass_filtering(input_image, 5, 3))
+
+    # cv2.imshow("Imagem com filtro do Tomita e Tsuji", image_low_pass_filtering(input_image, 6))
+    # cv2.imshow("Imagem com filtro do Nagao e Matsuyama", image_low_pass_filtering(input_image, 7))
+    # cv2.imshow("Imagem com filtro do Somboonkaew", image_low_pass_filtering(input_image, 8))
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()

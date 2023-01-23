@@ -125,13 +125,13 @@ if __name__ == "__main__":
     """
     binary_image: np.ndarray[np.uint8] = image_gray_scale_transformation(input_image, 1)
     binary_image_histogram: np.ndarray[np.float32] = cv2.calcHist([binary_image], [0], None, [256], [0, 256])
-    cv2.imshow("Imagem binária", binary_image)
+    cv2.imshow("Imagem binaria", binary_image)
     plt.plot(binary_image_histogram)
     """
     """
     logarithmic_image: np.ndarray[np.uint8] = image_gray_scale_transformation(input_image, 2)
     logarithmic_image_histogram: np.ndarray[np.float32] = cv2.calcHist([logarithmic_image], [0], None, [256], [0, 256])
-    cv2.imshow("Imagem logarítmica", logarithmic_image)
+    cv2.imshow("Imagem logaritmica", logarithmic_image)
     plt.plot(logarithmic_image_histogram)
     """
     """
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     square_power_image: np.ndarray[np.uint8] = image_gray_scale_transformation(input_image, 5)
     square_power_image_histogram: np.ndarray[np.float32] = cv2.calcHist([square_power_image], [0], None, [256],
                                                                         [0, 256])
-    cv2.imshow("Imagem com potência quadrada", square_power_image)
+    cv2.imshow("Imagem com potencia quadrada", square_power_image)
     plt.plot(square_power_image_histogram)
     """
     plt.plot(input_image_histogram)

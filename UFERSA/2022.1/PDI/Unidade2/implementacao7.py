@@ -29,7 +29,7 @@ def image_bit_plane_slicing(image: np.ndarray[np.uint8], planes_number: int) -> 
 
         planes_list.append(np.bitwise_and(image, np.full_like(image, number)) * 255)
 
-    return planes_list
+    return np.uint8(planes_list)
 
 
 if __name__ == "__main__":
@@ -37,12 +37,14 @@ if __name__ == "__main__":
 
     for x in range(2):
         cv2.imshow(f"Imagem com 2 bits fatiados (bit {x + 1})", image_bit_plane_slicing(input_image, 2)[x])
-
+    """
     for x in range(4):
         cv2.imshow(f"Imagem com 4 bits fatiados (bit {x + 1})", image_bit_plane_slicing(input_image, 4)[x])
-
+    """
+    """
     for x in range(8):
         cv2.imshow(f"Imagem com 8 bits fatiados (bit {x + 1})", image_bit_plane_slicing(input_image, 8)[x])
+    """
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()

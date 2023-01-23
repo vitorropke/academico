@@ -100,10 +100,10 @@ if __name__ == "__main__":
     input_image: np.ndarray[np.uint8] = cv2.imread("imagens/imagem2.jpeg")
 
     cv2.imshow("Imagem rotacionada", image_transformation(input_image, 0, 45))
-    cv2.imshow("Imagem deslocada", image_transformation(input_image, 1, 100, 100))
-    cv2.imshow("Imagem escalonada", image_transformation(input_image, 2, 2, 2))
-    cv2.imshow("Imagem refletida", image_transformation(input_image, 3, True, True))
-    cv2.imshow("Imagem cisalhada", image_transformation(input_image, 4, 1302, 100))
+    # cv2.imshow("Imagem deslocada", image_transformation(input_image, 1, 100, 100))
+    # cv2.imshow("Imagem escalonada", image_transformation(input_image, 2, 2, 2))
+    # cv2.imshow("Imagem refletida", image_transformation(input_image, 3, True, True))
+    # cv2.imshow("Imagem cisalhada", image_transformation(input_image, 4, 1302, 100))
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()

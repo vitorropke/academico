@@ -172,20 +172,24 @@ def image_error_diffusion_dithering(image: np.ndarray[np.uint8], technic: int) -
 
 
 if __name__ == "__main__":
-    input_image: np.ndarray[np.uint8] = cv2.imread("imagens/lena.pgm")
+    input_image: np.ndarray[np.uint8] = cv2.imread("imagens/lena_cor.jpg")
 
     cv2.imshow("Imagem com pontilhado ordenado (2x2)", image_ordered_dithering(input_image, 0))
-    cv2.imshow("Imagem com pontilhado ordenado (2x3)", image_ordered_dithering(input_image, 1))
-    cv2.imshow("Imagem com pontilhado ordenado (3x3)", image_ordered_dithering(input_image, 2))
-
-    cv2.imshow("Imagem com pontilhado com difusão de erro (Floyd e Steinberg)",
+    # cv2.imshow("Imagem com pontilhado ordenado (2x3)", image_ordered_dithering(input_image, 1))
+    # cv2.imshow("Imagem com pontilhado ordenado (3x3)", image_ordered_dithering(input_image, 2))
+    """
+    cv2.imshow("Imagem com pontilhado com difusao de erro (Floyd e Steinberg)",
                image_error_diffusion_dithering(input_image, 0))
-    cv2.imshow("Imagem com pontilhado com difusão de erro (Rogers)", image_error_diffusion_dithering(input_image, 1))
-    cv2.imshow("Imagem com pontilhado com difusão de erro (Jarvis, Judice & Ninke)",
+    """
+    # cv2.imshow("Imagem com pontilhado com difusao de erro (Rogers)", image_error_diffusion_dithering(input_image, 1))
+    """
+    cv2.imshow("Imagem com pontilhado com difusao de erro (Jarvis, Judice & Ninke)",
                image_error_diffusion_dithering(input_image, 2))
-    cv2.imshow("Imagem com pontilhado com difusão de erro (Stucki)", image_error_diffusion_dithering(input_image, 3))
-    cv2.imshow("Imagem com pontilhado com difusão de erro (Stevenson e Arce)",
+    """
+    # cv2.imshow("Imagem com pontilhado com difusao de erro (Stucki)", image_error_diffusion_dithering(input_image, 3))
+    """
+    cv2.imshow("Imagem com pontilhado com difusao de erro (Stevenson e Arce)",
                image_error_diffusion_dithering(input_image, 4))
-
+    """
     cv2.waitKey(0)
     cv2.destroyAllWindows()

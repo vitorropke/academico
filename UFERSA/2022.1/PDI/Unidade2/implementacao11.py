@@ -422,43 +422,43 @@ def image_watershed_segmentation(image: np.ndarray[np.uint8]) -> np.ndarray[np.u
 if __name__ == "__main__":
     input_image: np.ndarray[np.uint8] = cv2.imread("imagens/lena.pgm")
     """
-    cv2.imshow("Imagem com detecção de pontos", image_point_detection(input_image, 150))
+    cv2.imshow("Imagem com deteccao de pontos", image_point_detection(input_image, 150))
     """
     """
-    cv2.imshow("Imagem com detecção de retas horizontais", image_line_detection(input_image, 0))
-    cv2.imshow("Imagem com detecção de retas diagonais (45º)", image_line_detection(input_image, 1))
-    cv2.imshow("Imagem com detecção de retas verticais", image_line_detection(input_image, 2))
-    cv2.imshow("Imagem com detecção de retas diagonais (135º)", image_line_detection(input_image, 3))
+    cv2.imshow("Imagem com deteccao de retas horizontais", image_line_detection(input_image, 0))
+    cv2.imshow("Imagem com deteccao de retas diagonais (45º)", image_line_detection(input_image, 1))
+    cv2.imshow("Imagem com deteccao de retas verticais", image_line_detection(input_image, 2))
+    cv2.imshow("Imagem com deteccao de retas diagonais (135º)", image_line_detection(input_image, 3))
     """
     """
-    cv2.imshow("Imagem com detecção de bordas (Roberts)", image_edge_detection(input_image, 0))
-    cv2.imshow("Imagem com detecção de bordas (Roberts cruzado)", image_edge_detection(input_image, 1))
-    cv2.imshow("Imagem com detecção de bordas (Prewitt Gx)", image_edge_detection(input_image, 2))
-    cv2.imshow("Imagem com detecção de bordas (Prewitt Gy)", image_edge_detection(input_image, 3))
-    cv2.imshow("Imagem com detecção de bordas (Prewitt magnitude)", image_edge_detection(input_image, 4))
+    cv2.imshow("Imagem com deteccao de bordas (Roberts)", image_edge_detection(input_image, 0))
+    cv2.imshow("Imagem com deteccao de bordas (Roberts cruzado)", image_edge_detection(input_image, 1))
+    cv2.imshow("Imagem com deteccao de bordas (Prewitt Gx)", image_edge_detection(input_image, 2))
+    cv2.imshow("Imagem com deteccao de bordas (Prewitt Gy)", image_edge_detection(input_image, 3))
+    cv2.imshow("Imagem com deteccao de bordas (Prewitt magnitude)", image_edge_detection(input_image, 4))
     
-    cv2.imshow("Imagem com detecção de bordas (Sobel Gx)", image_edge_detection(input_image, 5))
-    cv2.imshow("Imagem com detecção de bordas (Sobel Gy)", image_edge_detection(input_image, 6))
-    cv2.imshow("Imagem com detecção de bordas (Sobel magnitude)", image_edge_detection(input_image, 7))
+    cv2.imshow("Imagem com deteccao de bordas (Sobel Gx)", image_edge_detection(input_image, 5))
+    cv2.imshow("Imagem com deteccao de bordas (Sobel Gy)", image_edge_detection(input_image, 6))
+    cv2.imshow("Imagem com deteccao de bordas (Sobel magnitude)", image_edge_detection(input_image, 7))
     
-    cv2.imshow("Imagem com detecção de bordas (Kirsch)", image_edge_detection(input_image, 8))
-    cv2.imshow("Imagem com detecção de bordas (Robinson)", image_edge_detection(input_image, 9))
+    cv2.imshow("Imagem com deteccao de bordas (Kirsch)", image_edge_detection(input_image, 8))
+    cv2.imshow("Imagem com deteccao de bordas (Robinson)", image_edge_detection(input_image, 9))
     
-    cv2.imshow("Imagem com detecção de bordas (Frei-Chen)", image_edge_detection(input_image, 10))
+    cv2.imshow("Imagem com deteccao de bordas (Frei-Chen)", image_edge_detection(input_image, 10))
     
-    cv2.imshow("Imagem com detecção de bordas (Laplaciano H1)", image_edge_detection(input_image, 11))
-    cv2.imshow("Imagem com detecção de bordas (Laplaciano H2)", image_edge_detection(input_image, 12))
+    cv2.imshow("Imagem com deteccao de bordas (Laplaciano H1)", image_edge_detection(input_image, 11))
+    cv2.imshow("Imagem com deteccao de bordas (Laplaciano H2)", image_edge_detection(input_image, 12))
     """
     """
-    cv2.imshow("Imagem com limiarização global", image_global_thresholding(input_image, 150))
+    cv2.imshow("Imagem com limiarizacao global", image_global_thresholding(input_image, 150))
     
-    cv2.imshow("Imagem com limiarização local (média)", image_local_thresholding(input_image, 0, 21, 0.1))
-    cv2.imshow("Imagem com limiarização local (máxima)", image_local_thresholding(input_image, 1, 21, 0.1))
-    cv2.imshow("Imagem com limiarização local (mínima)", image_local_thresholding(input_image, 2, 21, 0.1))
-    cv2.imshow("Imagem com limiarização local (Niblack)", image_local_thresholding(input_image, 3, 21, 0.1))
+    cv2.imshow("Imagem com limiarizacao local (media)", image_local_thresholding(input_image, 0, 21, 0.1))
+    cv2.imshow("Imagem com limiarizacao local (maxima)", image_local_thresholding(input_image, 1, 21, 0.1))
+    cv2.imshow("Imagem com limiarizacao local (minima)", image_local_thresholding(input_image, 2, 21, 0.1))
+    cv2.imshow("Imagem com limiarizacao local (Niblack)", image_local_thresholding(input_image, 3, 21, 0.1))
     """
     """
-    cv2.imshow("Imagem segmentada com crescimento de região", image_region_growing_segmentation(input_image, 128))
+    cv2.imshow("Imagem segmentada com crescimento de regiao", image_region_growing_segmentation(input_image, 128))
     
     cv2.imshow("Imagem segmentada com watershed", image_watershed_segmentation(input_image))
     """

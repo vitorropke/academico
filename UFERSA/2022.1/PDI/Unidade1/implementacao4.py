@@ -1,5 +1,5 @@
 """
-Realizar a pseudo colorização de “Fatiamento por Densidade”: para cada nível (ou níveis) de cinza atribuir uma valor no
+Realizar a pseudo colorização de “Fatiamento por Densidade”: para cada nível (ou níveis) de cinza atribuir um valor no
 espaço de cor.
 
 Realizar a pseudo colorização de “Redistribuição de cores”: as cores duma imagem colorida são redistribuídas para

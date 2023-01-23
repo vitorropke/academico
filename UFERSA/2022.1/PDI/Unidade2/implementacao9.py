@@ -73,11 +73,11 @@ if __name__ == "__main__":
     input_image: np.ndarray[np.uint8] = cv2.imread("imagens/lena.pgm")
 
     cv2.imshow("Imagem com filtro H1", image_high_pass_filtering(input_image, 0))
-    cv2.imshow("Imagem com filtro H2", image_high_pass_filtering(input_image, 1))
-    cv2.imshow("Imagem com filtro M1", image_high_pass_filtering(input_image, 2))
-    cv2.imshow("Imagem com filtro M2", image_high_pass_filtering(input_image, 3))
-    cv2.imshow("Imagem com filtro M3", image_high_pass_filtering(input_image, 4))
-    cv2.imshow("Imagem com filtro High-Boost", image_high_pass_filtering(input_image, 5, 1.0))
+    # cv2.imshow("Imagem com filtro H2", image_high_pass_filtering(input_image, 1))
+    # cv2.imshow("Imagem com filtro M1", image_high_pass_filtering(input_image, 2))
+    # cv2.imshow("Imagem com filtro M2", image_high_pass_filtering(input_image, 3))
+    # cv2.imshow("Imagem com filtro M3", image_high_pass_filtering(input_image, 4))
+    # cv2.imshow("Imagem com filtro High-Boost", image_high_pass_filtering(input_image, 5, 1.0))
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()

@@ -92,19 +92,22 @@ if __name__ == "__main__":
     cv2.imshow("Componente R (RGB)", image_color_splitting(input_image, 0)[0])
     cv2.imshow("Componente G (RGB)", image_color_splitting(input_image, 0)[1])
     cv2.imshow("Componente B (RGB)", image_color_splitting(input_image, 0)[2])
-
+    """
     cv2.imshow("Componente H (HSV)", image_color_splitting(input_image, 1)[0])
     cv2.imshow("Componente S (HSV)", image_color_splitting(input_image, 1)[1])
     cv2.imshow("Componente V (HSV)", image_color_splitting(input_image, 1)[2])
-
+    """
+    """
     cv2.imshow("Componente Y (YUV)", image_color_splitting(input_image, 2)[0])
     cv2.imshow("Componente U (YUV)", image_color_splitting(input_image, 2)[1])
     cv2.imshow("Componente V (YUV)", image_color_splitting(input_image, 2)[2])
-
+    """
+    """
     cv2.imshow("Componente C (CMYK)", image_color_splitting(input_image, 3)[0])
     cv2.imshow("Componente M (CMYK)", image_color_splitting(input_image, 3)[1])
     cv2.imshow("Componente Y (CMYK)", image_color_splitting(input_image, 3)[2])
     cv2.imshow("Componente K (CMYK)", image_color_splitting(input_image, 3)[3])
+    """
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
