@@ -16,7 +16,7 @@ public class ThreadReceptora implements Runnable {
 	public void run() {
 		try {
 			boolean conexao = true;
-			while (conexao) {
+			do {
 				ServerSocket servidor = new ServerSocket(portaServidor);
 				Socket cliente = servidor.accept();
 				servidor.close();
@@ -56,9 +56,7 @@ public class ThreadReceptora implements Runnable {
 								+ mensagem.getMensagem() + "\n");
 					}
 				}
-			}
-
-			System.exit(0);
+			} while (conexao);
 		} catch (IOException e) {
 			System.err.println("Nao e possivel operar esse tipo de dado. Tente outra vez!\n\n");
 			e.printStackTrace();
@@ -67,5 +65,7 @@ public class ThreadReceptora implements Runnable {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+
+		System.exit(0);
 	}
 }

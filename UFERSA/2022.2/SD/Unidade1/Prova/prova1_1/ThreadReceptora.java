@@ -22,7 +22,7 @@ public class ThreadReceptora implements Runnable {
 	public void run() {
 		try {
 			boolean conexao = true;
-			while (conexao) {
+			do {
 				// Cria o datagrama para receber uma mensagem.
 				byte[] bufferRecebimento = new byte[1024];
 				DatagramPacket datagramaRecebimento = new DatagramPacket(bufferRecebimento, bufferRecebimento.length);
@@ -58,9 +58,7 @@ public class ThreadReceptora implements Runnable {
 				}
 
 				socket.close();
-			}
-
-			System.exit(0);
+			} while (conexao);
 		} catch (IOException e) {
 			System.err.println("Nao e possivel operar esse tipo de dado. Tente outra vez!\n\n");
 			e.printStackTrace();
@@ -69,5 +67,7 @@ public class ThreadReceptora implements Runnable {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+
+		System.exit(0);
 	}
 }

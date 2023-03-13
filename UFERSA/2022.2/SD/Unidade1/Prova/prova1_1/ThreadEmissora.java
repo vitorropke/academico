@@ -52,7 +52,7 @@ public class ThreadEmissora implements Runnable {
 		Scanner teclado = new Scanner(System.in);
 
 		boolean conexao = true;
-		while (conexao) {
+		do {
 			// Lê a mensagem.
 			System.out.print("Digite sua mensagem: ");
 			String mensagemTeclado = teclado.nextLine();
@@ -106,7 +106,7 @@ public class ThreadEmissora implements Runnable {
 			Mensagem mensagem = new Mensagem(mensagemTeclado, portaDestino, pid);
 
 			enviarMensagem(mensagem, processoDestinatario);
-		}
+		} while (conexao);
 
 		teclado.close();
 		System.exit(0);

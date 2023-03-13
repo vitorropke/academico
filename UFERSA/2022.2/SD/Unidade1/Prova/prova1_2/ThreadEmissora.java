@@ -32,7 +32,7 @@ public class ThreadEmissora implements Runnable {
 		Scanner teclado = new Scanner(System.in);
 
 		boolean conexao = true;
-		while (conexao) {
+		do {
 			// Lê a mensagem.
 			System.out.print("Digite sua mensagem: ");
 			String mensagemTeclado = teclado.nextLine();
@@ -98,7 +98,7 @@ public class ThreadEmissora implements Runnable {
 			System.out.print((processoDestinatario.getPorta() == processoCentral.getPorta()) ? "todos"
 					: processoDestinatario.getNome());
 			System.out.println(": " + mensagem.getMensagem() + "\n");
-		}
+		} while (conexao);
 
 		teclado.close();
 		System.exit(0);
