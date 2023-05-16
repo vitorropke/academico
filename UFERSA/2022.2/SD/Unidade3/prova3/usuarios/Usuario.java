@@ -52,6 +52,10 @@ public abstract class Usuario {
 	public static void executar(String login, String senha) {
 		config();
 
+		if (stub == null) {
+			stub = new ServiceGateway();
+		}
+
 		/*
 		 * System.out.print("Informe o nome/endereco do RMIRegistry: "); String host =
 		 * inserirString();
@@ -64,7 +68,6 @@ public abstract class Usuario {
 		 * while (usuario == null);
 		 */
 		Usuario usuario = ImplLoja.autenticarUsuario(login, senha);
-		stub = new ServiceGateway();
 
 		try {
 			boolean conexao = true;
