@@ -1,0 +1,11 @@
+• Operações que devem ser feitas:
+– Criar um Tipo (Type) e depois criar uma tabela de
+tipos
+– Implementação de Objetos Complexos (Row e
+Arrays)
+– CRUD (Inserção, Remoção, Atualização e Consulta)
+nesses objetos complexos
+– Fazer uma View qualquer usando Row e Array
+– Implementação de Herança
+– CRUD na Herança
+
