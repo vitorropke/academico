@@ -1,0 +1,5 @@
+Desenvolver um banco de dados
+móvel (usando SQLite) para qualquer
+dispositivo móvel com as 4 operações
+de banco de dados.
+
