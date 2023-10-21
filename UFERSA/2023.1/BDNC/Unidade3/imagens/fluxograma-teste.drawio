@@ -1,0 +1,41 @@
+<mxfile host="app.diagrams.net" modified="2023-10-04T17:38:44.964Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0" etag="UD8GICVbx3vOFnFq8cwg" version="21.8.2" type="device">
+  <diagram name="Página-1" id="aMIDOdvV_AoupJTi8Lph">
+    <mxGraphModel dx="989" dy="498" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="EGCWVqeS-pnvccIFfHf2-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EGCWVqeS-pnvccIFfHf2-2" target="EGCWVqeS-pnvccIFfHf2-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EGCWVqeS-pnvccIFfHf2-2" value="Instalação do SGBD" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="280" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="EGCWVqeS-pnvccIFfHf2-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EGCWVqeS-pnvccIFfHf2-3" target="EGCWVqeS-pnvccIFfHf2-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EGCWVqeS-pnvccIFfHf2-3" value="Execução do sistema operacional" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="80" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="EGCWVqeS-pnvccIFfHf2-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="EGCWVqeS-pnvccIFfHf2-5" target="EGCWVqeS-pnvccIFfHf2-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EGCWVqeS-pnvccIFfHf2-5" value="Testes no SGBD" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="480" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="EGCWVqeS-pnvccIFfHf2-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="EGCWVqeS-pnvccIFfHf2-7" target="EGCWVqeS-pnvccIFfHf2-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="310" />
+              <mxPoint x="820" y="370" />
+              <mxPoint x="60" y="370" />
+              <mxPoint x="60" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EGCWVqeS-pnvccIFfHf2-7" value="Reinicialização do sistema operacional" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="680" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

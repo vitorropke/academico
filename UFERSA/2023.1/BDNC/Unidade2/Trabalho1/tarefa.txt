@@ -1,0 +1,1 @@
+• Implementar um BD Chave-Valor qualquer com todo o CRUD funcionando.
