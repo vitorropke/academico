@@ -1,0 +1,21 @@
+// criar objeto
+[
+  {
+    "nome": "cumulonimbus",
+    "altitude": 6000,
+    "chuva": 100
+  },
+  {
+    "nome": "cirrus",
+    "altitude": 10000,
+    "vento": 44.4
+  }
+]
+
+// buscar objeto
+{altitude:  10000}
+
+{nome: "cumulonimbus"}
+
+// gte = greater than or equal
+{ altitude: { $gte: 1000 } }

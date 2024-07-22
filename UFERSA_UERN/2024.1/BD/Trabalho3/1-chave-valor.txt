@@ -1,0 +1,60 @@
+sudo redis-server /etc/redis/redis.conf
+
+redis-cli
+
+// criar objeto com valor, sem campo
+SET key value
+SET 0 "nada"
+
+// criar objeto com campos e valores
+HSET key field value [field value ...]
+HSET 1 fabricante "boeing" modelo "777-300ER" num_passageiros 300
+HSET 2 fabricante "Lockheed Martin" modelo "F-35" num_motores 1
+-----------------------------------------------------------------------------------------------------------
+// ler tudo
+KEYS *
+
+// ler objeto
+GET key
+GET 0
+
+// ler todos os campos e valores do objeto
+HGETALL key
+HGETALL 1
+HGETALL 2
+
+// ler um campo específico da chave
+HGET key field
+HGET 1 fabricante
+HGET 1 num_passageiros
+HGET 1 num_motores
+HGET 2 num_motores
+
+// ler campos específicos da chave
+HMGET key field [field ...]
+HMGET 1 fabricante modelo
+HMGET 2 modelo num_motores
+
+// ler valores da chave
+HVALS key
+HVALS 1
+HVALS 2
+
+// ler campos da chave
+HKEYS key
+HKEYS 1
+HKEYS 2
+-----------------------------------------------------------------------------------------------------------
+// atualizar objetos (sobrescrever)
+SET 0 "tudo"
+
+HSET 1 fabricante "Boeing" num_motores 2
+HSET 2 municao "2x AIM-9X Sidewinder"
+-----------------------------------------------------------------------------------------------------------
+// remover objetos
+DEL 1
+DEL 2
+
+// remover tudo
+FLUSHDB
+FLUSHALL

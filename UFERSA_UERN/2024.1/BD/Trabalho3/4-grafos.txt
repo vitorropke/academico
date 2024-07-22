@@ -1,0 +1,78 @@
+// criar nós
+CREATE
+(mossoro:Cidade {nome: 'Mossoró', populacao: 200000}),
+(assu:Cidade {nome: 'Assú', populacao: 56496}),
+(itaja:Cidade {nome: 'Itajá', populacao: 7292}),
+(angicos:Cidade {nome: 'Angicos', populacao: 11632}),
+(fp:Cidade {nome: 'Fernando Pedroza', populacao: 2938}),
+(lajes:Cidade {nome: 'Lajes', populacao: 9866}),
+(crv:Cidade {nome: 'Caiçara do Rio do Vento', populacao: 3268}),
+(riachuelo:Cidade {nome: 'Riachuelo', populacao: 7389}),
+(sm:Cidade {nome: 'Santa Maria', populacao: 4847}),
+(macaiba:Cidade {nome: 'Macaíba', populacao: 82249}),
+(parnamirim:Cidade {nome: 'Parnamirim', populacao: 252716}),
+(natal:Cidade {nome: 'Natal', populacao: 751300})
+
+// criar arestas
+MATCH
+(mossoro:Cidade {nome: 'Mossoró'}),
+(assu:Cidade {nome: 'Assú'}),
+(itaja:Cidade {nome: 'Itajá'}),
+(angicos:Cidade {nome: 'Angicos'}),
+(fp:Cidade {nome: 'Fernando Pedroza'}),
+(lajes:Cidade {nome: 'Lajes'}),
+(crv:Cidade {nome: 'Caiçara do Rio do Vento'}),
+(riachuelo:Cidade {nome: 'Riachuelo'}),
+(sm:Cidade {nome: 'Santa Maria'}),
+(macaiba:Cidade {nome: 'Macaíba'}),
+(parnamirim:Cidade {nome: 'Parnamirim'}),
+(natal:Cidade {nome: 'Natal'})
+
+CREATE
+(mossoro)-[:VIAGEM {distancia: 70.3, tempo: 64}]->(assu),
+(assu)-[:VIAGEM {distancia: 11.5, tempo: 16}]->(itaja),
+(itaja)-[:VIAGEM {distancia: 32.9, tempo: 30}]->(angicos),
+(angicos)-[:VIAGEM {distancia: 11.4, tempo: 14}]->(fp),
+(fp)-[:VIAGEM {distancia: 33.9, tempo: 31}]->(lajes),
+(lajes)-[:VIAGEM {distancia: 28.4, tempo: 25}]->(crv),
+(crv)-[:VIAGEM {distancia: 23.3, tempo: 20}]->(riachuelo),
+(riachuelo)-[:VIAGEM {distancia: 14.9, tempo: 13}]->(sm),
+(sm)-[:VIAGEM {distancia: 39.5, tempo: 35}]->(macaiba),
+(macaiba)-[:VIAGEM {distancia: 15.8, tempo: 18}]->(parnamirim),
+(parnamirim)-[:VIAGEM {distancia: 20.1, tempo: 24}]->(natal)
+-----------------------------------------------------------------------------------------------------------
+// ler tudo
+MATCH (n) RETURN n
+
+// ler um nó
+MATCH (mossoro:Cidade {nome: 'Mossoró'}) RETURN mossoro
+
+// ler um nó e seus adjacentes
+MATCH (mossoro:Cidade {nome: 'Mossoró'})-[:VIAGEM]-(destinos) RETURN mossoro, destinos
+MATCH (assu:Cidade {nome: 'Assú'})-[:VIAGEM]-(destinos) RETURN assu, destinos
+
+// ler uma aresta
+MATCH (:Cidade {nome: 'Mossoró'})-[viagem:VIAGEM]-(:Cidade {nome: 'Assú'}) RETURN viagem
+MATCH (:Cidade {nome: 'Assú'})-[viagem:VIAGEM]-(destinos) RETURN viagem, destinos
+-----------------------------------------------------------------------------------------------------------
+// atualizar atributo de algum nó
+MATCH (mossoro:Cidade {nome: 'Mossoró'})
+SET mossoro.populacao = 264577
+RETURN mossoro
+
+// atualizar atributo de alguma aresta
+MATCH (:Cidade {nome: 'Mossoró'})-[viagem:VIAGEM]-(:Cidade {nome: 'Assú'})
+SET viagem = {distancia: 72.4, tempo: 80}
+RETURN viagem
+-----------------------------------------------------------------------------------------------------------
+// deletar aresta
+MATCH (:Cidade {nome: 'Lajes'})-[viagem:VIAGEM]-(:Cidade {nome: 'Caiçara do Rio do Vento'})
+DELETE viagem
+
+// deletar nó
+MATCH (mossoro:Cidade {nome: 'Mossoró'})
+DETACH DELETE mossoro
+
+// deletar tudo
+MATCH (n)
+DETACH DELETE n

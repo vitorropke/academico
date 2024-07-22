@@ -1,0 +1,32 @@
+ScyllaDB
+
+cqlsh
+
+CREATE KEYSPACE ornitologia WITH replication = {'class': 'NetworkTopologyStrategy', 'replication_factor': 1};
+USE ornitologia;
+
+// criar
+CREATE TABLE aves (
+	id uuid PRIMARY KEY,
+	nome_popular text,
+	nome_cientifico text,
+	envergadura float,
+	comprimento float,
+	peso float
+);
+
+// inserir
+INSERT INTO aves (id, nome_popular, nome_cientifico, envergadura, comprimento, peso) VALUES (uuid(), 'Suindara', 'Tyto Furcata', 1.10, 0.38, 0.573);
+
+INSERT INTO aves (id, nome_popular, nome_cientifico, envergadura, comprimento, peso) VALUES (uuid(), 'Bem-te-vi', 'Pitangus Sulphuratus', 0.39, 0.25, 0.068);
+
+// consultar tudo
+SELECT * FROM aves;
+// consultar um
+SELECt * FROM aves WHERE id = ?;
+
+// atualizar
+UPDATE aves SET peso = 0.1 WHERE id = ?;
+
+// remover
+DELETE FROM aves WHERE id = ?;
