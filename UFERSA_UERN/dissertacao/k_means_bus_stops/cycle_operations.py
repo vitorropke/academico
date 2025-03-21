@@ -62,11 +62,6 @@ def create_greedy_cycle(instance: DataFrame, origin_destination: str | int | Non
     return cycle
 
 
-def create_multiple_cycles_from_one_cycle(instance: DataFrame, cycle: list[str | int], maximum_number_of_points: int) -> \
-        list[list[str | int]]:
-    exit(0)
-
-
 def is_valid_cycle(instance: DataFrame, cycle: list[str | int]) -> bool:
     # Find for invalid edges.
     for i in range(len(cycle) - 1):

@@ -21,26 +21,39 @@ def main():
 
     # Generate cycles.
     # Cluster cycle.
-    cluster_cycle: list[list[str | int]] = []
+    clusters_cycles: list[list[list[str | int]]] = []
     for i, current_cluster in enumerate(np.unique(ar=clusters)):
         selected_points: pd.Index(str | int) = distances.index[np.where(clusters == current_cluster)[0]]
-        cluster_cycle.append(
-            create_greedy_cycle(instance=distances.loc[selected_points, selected_points],
-                                origin_destination=distances.index[hubs[i]]))
 
+        sub_clusters: np.ndarray[np.int32] = calculate_sub_cluster(instance=distances.loc[selected_points],
+                                                                   number_of_sub_clusters=3)
+
+        sub_cluster_cycle: list[list[str | int]] = []
+        for current_sub_cluster in np.unique(ar=sub_clusters):
+            selected_sub_points: pd.Index(str | int) = distances.index[np.where(sub_clusters == current_sub_cluster)[0]]
+
+            if distances.index[hubs[i]] not in selected_sub_points:
+                selected_sub_points = selected_sub_points.append(pd.Index([distances.index[hubs[i]]]))
+
+            sub_cluster_cycle.append(
+                create_greedy_cycle(instance=distances.loc[selected_sub_points, selected_sub_points],
+                                    origin_destination=distances.index[hubs[i]]))
+
+        clusters_cycles.append(sub_cluster_cycle)
     # Hub cycle.
     hubs_distances: DataFrame = distances.loc[distances.index[hubs], distances.index[hubs]]
-    hub_cycle: list[str | int] = create_greedy_cycle(instance=hubs_distances)
+    hubs_cycle: list[str | int] = create_greedy_cycle(instance=hubs_distances)
 
     # Print cycles.
-    for i, cycle in enumerate(cluster_cycle):
-        print(f'Cluster {i} cycle cost: {calculate_cycle_cost(instance=distances, cycle=cycle)}')
-        print(f'Cluster {i} number of points: {len(cycle)}')
-    print(f'Hub cycle cost: {calculate_cycle_cost(instance=distances, cycle=hub_cycle)}')
+    for i, cycle in enumerate(clusters_cycles):
+        for j, sub_cycle in enumerate(cycle):
+            print(f'Cluster {i}.{j} cycle cost: {calculate_cycle_cost(instance=distances, cycle=sub_cycle)}')
+            print(f'Cluster {i}.{j} number of points: {len(sub_cycle)}')
+    print(f'Hub cycle cost: {calculate_cycle_cost(instance=distances, cycle=hubs_cycle)}')
 
     # Generate visualizations.
     generate_coordinates(instance=distances)
-    generate_graph(instance=distances, cycles=[cluster_cycle, hub_cycle])
+    generate_graph(instance=distances, clusters_cycles=clusters_cycles, hubs_cycle=hubs_cycle)
 
 
 if __name__ == '__main__':

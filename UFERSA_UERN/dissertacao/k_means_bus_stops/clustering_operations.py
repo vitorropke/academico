@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd
+from k_means_constrained import KMeansConstrained
 from kneed import KneeLocator
 from matplotlib import pyplot as plt
 from pandas import DataFrame
@@ -7,8 +7,6 @@ from scipy.cluster.hierarchy import cophenet, dendrogram, fcluster, linkage
 from scipy.spatial.distance import cdist, pdist
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
-
-from colors_operations import get_n_colors
 
 
 def calculate_hierarchical_clusters(instance: DataFrame) -> tuple[np.ndarray[np.int32], np.ndarray[np.int64]]:
@@ -18,9 +16,24 @@ def calculate_hierarchical_clusters(instance: DataFrame) -> tuple[np.ndarray[np.
     cophenetic_correlation_coefficient: np.float64 = cophenet(linkage_matrix, pdist(scaled_data))[0]
     print(cophenetic_correlation_coefficient)
 
-    clusters: np.ndarray[np.int32] = fcluster(Z=linkage_matrix, t=250, criterion='distance')
-    # The following code generates 't' clusters.
-    # clusters: np.ndarray[np.int32] = fcluster(Z=linkage_matrix, t=4, criterion='maxclust')
+    plt.figure()
+    dendrogram(Z=linkage_matrix, p=4, truncate_mode='lastp', color_threshold=(0.5 * linkage_matrix[-1:, 2]),
+               leaf_font_size=10, leaf_rotation=45)
+    plt.savefig(fname='outputs/dendrogram.pdf', transparent=True, bbox_inches='tight')
+
+    # option: int = int(input('Enter the option you want\n'
+    #                         '0: I want to enter the distance threshold\n'
+    #                         '1: I want to enter the number of clusters\n'))
+    option = 1
+    clusters: np.ndarray[np.int32]
+    if option == 0:
+        # distance_threshold: int = int(input('Enter the distance threshold: '))
+        distance_threshold = 400
+        clusters = fcluster(Z=linkage_matrix, t=distance_threshold, criterion='distance')
+    else:
+        # number_of_clusters: int = int(input('Enter the number of clusters: '))
+        number_of_clusters = 4
+        clusters = fcluster(Z=linkage_matrix, t=number_of_clusters, criterion='maxclust')
     instance['cluster'] = clusters
 
     centroids: np.ndarray[np.ndarray[np.float64]] = np.array(
@@ -28,11 +41,6 @@ def calculate_hierarchical_clusters(instance: DataFrame) -> tuple[np.ndarray[np.
     distances_to_centroids: np.ndarray[np.ndarray[np.float64]] = cdist(XA=scaled_data, XB=centroids, metric='euclidean')
     hubs: np.ndarray[np.int64] = np.argmin(a=distances_to_centroids, axis=0)
     instance['hub'] = np.where(instance.index.isin(instance.index[hubs]), 1, 0)
-
-    plt.figure()
-    dendrogram(Z=linkage_matrix, p=4, truncate_mode='lastp', color_threshold=(0.5 * linkage_matrix[-1:, 2]),
-               leaf_font_size=10, leaf_rotation=45)
-    plt.savefig(fname='outputs/dendrogram.pdf', transparent=True, bbox_inches='tight')
 
     return clusters, hubs
 
@@ -65,33 +73,45 @@ def calculate_k_means_clusters(instance: DataFrame, number_of_clusters: int) -> 
 
     k_means: KMeans = KMeans(n_clusters=number_of_clusters, random_state=42)
     k_means.fit_predict(X=scaled_data)
-    centroids: np.ndarray[np.float64] = k_means.cluster_centers_
+
     clusters: np.ndarray[np.int32] = k_means.labels_
     instance['cluster'] = clusters
 
     # Find the closest point to each centroid.
-    distances_to_centroids: np.ndarray[np.ndarray[np.float64]] = cdist(XA=scaled_data, XB=centroids,
-                                                                       metric='euclidean')
+    centroids: np.ndarray[np.float64] = k_means.cluster_centers_
+    distances_to_centroids: np.ndarray[np.ndarray[np.float64]] = cdist(XA=scaled_data, XB=centroids, metric='euclidean')
     hubs: np.ndarray[np.int64] = np.argmin(a=distances_to_centroids, axis=0)
     instance['hub'] = np.where(instance.index.isin(instance.index[hubs]), 1, 0)
 
-    # Plot the graph.
-    plt.clf()
-    colors: list[str] = get_n_colors(number_of_colors=len(instance['cluster'].unique()))
-    for i in range(number_of_clusters):
-        current_cluster_data: pd.Index(str | int) = instance.index[np.where(clusters == i)[0]]
-        current_hub_data: str | int = instance.index[hubs[i]]
-        plt.scatter(x=instance.loc[current_cluster_data, 'longitude'], y=instance.loc[current_cluster_data, 'latitude'],
-                    c=colors[i], label=f'Cluster {i}')
-        plt.scatter(x=instance.loc[current_hub_data, 'longitude'], y=instance.loc[current_hub_data, 'latitude'], s=150,
-                    c=colors[i], marker='x', label=f'Hub {i}')
-    plt.savefig(fname='outputs/clusters.pdf', transparent=True, bbox_inches='tight')
-
     return clusters, hubs
+
+
+def calculate_sub_cluster(instance: DataFrame, maximum_number_of_points_per_sub_cluster: int | None = None,
+                          number_of_sub_clusters: int | None = None) -> np.ndarray[np.int32] | None:
+    if (maximum_number_of_points_per_sub_cluster is None) and (number_of_sub_clusters is None):
+        print('There is nothing to be done!')
+        return
+    elif maximum_number_of_points_per_sub_cluster is None:
+        maximum_number_of_points_per_sub_cluster = int(np.ceil(len(instance) / number_of_sub_clusters))
+    else:
+        number_of_sub_clusters = int(np.ceil(len(instance) / maximum_number_of_points_per_sub_cluster))
+
+    scaled_data: np.ndarray[np.ndarray[np.float64]] = scale_values(instance)
+
+    k_means_constrained = KMeansConstrained(n_clusters=number_of_sub_clusters,
+                                            size_min=(maximum_number_of_points_per_sub_cluster - 1),
+                                            size_max=maximum_number_of_points_per_sub_cluster, random_state=42)
+    k_means_constrained.fit_predict(X=scaled_data)
+
+    sub_clusters: np.ndarray[np.int32] = k_means_constrained.labels_
+    instance['sub_cluster'] = sub_clusters
+
+    return sub_clusters
 
 
 def scale_values(instance: DataFrame) -> np.ndarray[np.ndarray[np.float64]]:
     # return instance.drop(columns=['longitude', 'latitude', 'neighborhood'])
     # return StandardScaler().fit_transform(X=instance[['longitude', 'latitude', 'population']])
     return StandardScaler().fit_transform(
-        X=instance.drop(columns=['longitude', 'latitude', 'neighborhood']))
+        X=instance.drop(columns=['longitude', 'latitude', 'neighborhood', 'cluster', 'hub', 'sub_cluster'],
+                        errors='ignore'))
