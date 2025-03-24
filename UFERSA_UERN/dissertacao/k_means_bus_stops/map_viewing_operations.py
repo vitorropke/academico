@@ -10,7 +10,7 @@ from sklearn.manifold import MDS
 
 def generate_cluster_map(instance: DataFrame, clusters: np.ndarray[np.int32], hubs: np.ndarray[np.int64]) -> None:
     plt.clf()
-    colors: list[str] = get_colors(cycles=len(instance['cluster'].unique()))
+    colors: list[list[str]] = get_colors(cycles=len(instance['cluster'].unique()))
     for i in range(len(np.unique(ar=clusters))):
         current_cluster_data: pd.Index(str | int) = instance.index[np.where(clusters == i)[0]]
         current_hub_data: str | int = instance.index[hubs[i]]
@@ -35,19 +35,22 @@ def generate_coordinates(instance: DataFrame) -> None:
         plt.savefig(fname='outputs/map.pdf', transparent=True, bbox_inches='tight')
 
 
-def generate_graph(instance: DataFrame, clusters_cycles: list[list[list[str | int]]], hubs_cycle: list[str | int]) -> None:
+def generate_graph(instance: DataFrame, clusters_cycles: list[list[list[str | int]]],
+                   hubs_cycle: list[str | int]) -> None:
     graph: Graph = Graph(engine='neato')
+    print(instance['sub_cluster'])
 
     # Nodes.
     colors: list[list[str]] = get_colors(cycles=clusters_cycles)
     for i, point in enumerate(instance.itertuples()):
-        graph.node(name=str(point.Index), color=colors[point.cluster], label=str(point.cluster),
+        graph.node(name=str(point.Index), color=colors[point.cluster][point.sub_cluster], label=str(point.cluster),
                    pos=f'{point.longitude * 1000},{point.latitude * 1000}!', shape=('box' if point.hub else 'ellipse'))
 
+    exit(0)
     # Clusters cycle.
     for cluster_cycle in clusters_cycles:
         cluster: int = instance.loc[cluster_cycle[0], 'cluster']
-        print(cluster)
+
         for i in range(len(cluster_cycle) - 1):
             graph.edge(tail_name=str(cluster_cycle[i]), head_name=str(cluster_cycle[i + 1]),
                        color=colors[cluster], penwidth='1')
@@ -58,11 +61,11 @@ def generate_graph(instance: DataFrame, clusters_cycles: list[list[list[str | in
     graph.render(filename='outputs/graph', format='pdf')
 
 
-def generate_map(instance: DataFrame, cycles: list[list[str | int]]):
+def generate_map(instance: DataFrame, cycles: list[list[list[str | int]]]):
     graph = nx.Graph()
 
     # Nodes.
-    colors: list[str] = get_colors(cycles=len(instance['cluster'].unique()))
+    colors: list[list[str]] = get_colors(cycles=cycles)
     for i, point in enumerate(instance.itertuples()):
         graph.add_node(i, pos=(point.latitude, point.longitude))
 
@@ -74,13 +77,23 @@ def generate_map(instance: DataFrame, cycles: list[list[str | int]]):
                        color=colors[cluster], penwidth='1')
 
 
-def get_colors(cycles: list[list[list[str | int]]]) -> list[str]:
-    number_of_cycles: int = len(cycles)
+def get_colors(cycles: list[list[list[str | int]]]) -> list[list[str]]:
+    colors: list[list[str]] = []
 
-    for current_cycle in cycles:
-        number_of_sub_cycles: int = len(current_cycle)
-        print(len(current_cycle))
-    exit(0)
-    colors: list[str] = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black', 'gray']
+    hue_step: float = 1.0 / len(cycles)
+    current_hue: float = 0.0
+    for current_cluster in cycles:
+        current_cluster_colors: list[str] = []
 
-    return colors[:cycles]
+        saturation_step: float = 1.0 / len(current_cluster)
+        current_saturation: float = saturation_step
+        for i in range(len(current_cluster)):
+            current_cluster_colors.append(f'{current_hue:.3f} {current_saturation:.3f} 1.000')
+
+            current_saturation += saturation_step
+
+        current_hue += hue_step
+
+        colors.append(current_cluster_colors)
+
+    return colors

@@ -25,8 +25,10 @@ def main():
     for i, current_cluster in enumerate(np.unique(ar=clusters)):
         selected_points: pd.Index(str | int) = distances.index[np.where(clusters == current_cluster)[0]]
 
-        sub_clusters: np.ndarray[np.int32] = calculate_sub_cluster(instance=distances.loc[selected_points],
+        sub_clusters: np.ndarray[np.int32] = calculate_sub_cluster(cluster=distances.loc[selected_points],
                                                                    number_of_sub_clusters=3)
+        print(sub_clusters)
+        exit(0)
 
         sub_cluster_cycle: list[list[str | int]] = []
         for current_sub_cluster in np.unique(ar=sub_clusters):
