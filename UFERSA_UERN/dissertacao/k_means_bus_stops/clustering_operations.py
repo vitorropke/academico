@@ -2,7 +2,7 @@ import numpy as np
 from k_means_constrained import KMeansConstrained
 from kneed import KneeLocator
 from matplotlib import pyplot as plt
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from scipy.cluster.hierarchy import cophenet, dendrogram, fcluster, linkage
 from scipy.spatial.distance import cdist, pdist
 from sklearn.cluster import KMeans
@@ -34,6 +34,8 @@ def calculate_hierarchical_clusters(instance: DataFrame) -> tuple[np.ndarray[np.
         # number_of_clusters: int = int(input('Enter the number of clusters: '))
         number_of_clusters = 4
         clusters = fcluster(Z=linkage_matrix, t=number_of_clusters, criterion='maxclust')
+    # Make the clusters start at 0.
+    clusters = clusters - 1
     instance['cluster'] = clusters
 
     centroids: np.ndarray[np.ndarray[np.float64]] = np.array(
@@ -87,7 +89,7 @@ def calculate_k_means_clusters(instance: DataFrame, number_of_clusters: int) -> 
 
 
 def calculate_sub_cluster(cluster: DataFrame, maximum_number_of_points_per_sub_cluster: int | None = None,
-                          number_of_sub_clusters: int | None = None) -> np.ndarray[np.int32] | None:
+                          number_of_sub_clusters: int | None = None) -> tuple[np.ndarray[np.int32], Series]:
     if (maximum_number_of_points_per_sub_cluster is None) and (number_of_sub_clusters is None):
         print('There is nothing to be done!')
         return
@@ -103,7 +105,9 @@ def calculate_sub_cluster(cluster: DataFrame, maximum_number_of_points_per_sub_c
                                             size_max=maximum_number_of_points_per_sub_cluster, random_state=42)
     k_means_constrained.fit_predict(X=scaled_data)
 
-    return k_means_constrained.labels_
+    cluster['sub_cluster'] = k_means_constrained.labels_
+
+    return cluster['sub_cluster'].values, cluster['sub_cluster']
 
 
 def scale_values(instance: DataFrame) -> np.ndarray[np.ndarray[np.float64]]:
