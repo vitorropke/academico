@@ -1,30 +1,32 @@
 import colorsys
 import networkx as nx
 import numpy as np
-import pandas as pd
 from graphviz import Graph
 from matplotlib import pyplot as plt
 from pandas import DataFrame
 from sklearn.manifold import MDS
 
 
-def generate_cluster_map(instance: DataFrame, clusters: np.ndarray[np.int32], sub_clusters: np.ndarray[np.int32],
-                         hubs: np.ndarray[np.int64], cycles: list[list[list[str | int]]]) -> None:
+def convert_color_from_hsv_to_rgb(hsv: str) -> tuple[float, float, float]:
+    hue: float
+    saturation: float
+    value: float
+    hue, saturation, value = map(float, hsv.split())
+
+    return colorsys.hsv_to_rgb(h=hue, s=saturation, v=value)
+
+
+def generate_cluster_map(instance: DataFrame, cycles: list[list[list[str | int]]]) -> None:
     plt.clf()
     colors: list[list[str]] = get_colors(cycles=cycles)
-    for current_cluster in np.unique(ar=clusters):
-        current_cluster_data: pd.Index(str | int) = instance.index[np.where(clusters == current_cluster)[0]]
-        for current_sub_cluster in np.unique(ar=sub_clusters):
-            print(len(sub_clusters))
-            current_sub_cluster_data: pd.Index(str | int) = current_cluster_data[
-                np.where(sub_clusters == current_sub_cluster)[0]]
-            plt.scatter(x=instance.loc[current_sub_cluster_data, 'longitude'],
-                        y=instance.loc[current_sub_cluster_data, 'latitude'],
-                        c=colors[current_cluster][current_sub_cluster], label=f'Cluster {current_cluster}.{current_sub_cluster}')
 
-        current_hub_data: str | int = instance.index[hubs[current_cluster]]
-        plt.scatter(x=instance.loc[current_hub_data, 'longitude'], y=instance.loc[current_hub_data, 'latitude'], s=150,
-                    c=colors[current_cluster], marker='x', label=f'Hub {current_cluster}')
+    instance['color'] = instance.apply(
+        lambda row: convert_color_from_hsv_to_rgb(colors[row['cluster']][row['sub_cluster']]), axis=1)
+
+    plt.scatter(x=instance['longitude'], y=instance['latitude'], c=instance['color'])
+
+    hubs: DataFrame = instance[instance['hub'] == 1]
+    plt.scatter(x=hubs['longitude'], y=hubs['latitude'], s=100, marker='X')
 
     plt.savefig(fname='outputs/clusters.pdf', transparent=True, bbox_inches='tight')
 
@@ -68,38 +70,43 @@ def generate_graph(instance: DataFrame, clusters_cycles: list[list[list[str | in
     for i in range(len(hubs_cycle) - 1):
         graph.edge(tail_name=str(hubs_cycle[i]), head_name=str(hubs_cycle[i + 1]), penwidth='100')
 
-    graph.render(filename='outputs/graph', format='pdf')
+    graph.render(filename='outputs/graphviz_graph', format='pdf')
 
 
-def generate_map(instance: DataFrame, cycles: list[list[list[str | int]]]):
+def generate_map(instance: DataFrame, clusters_cycles: list[list[list[str | int]]],
+                 hubs_cycle: list[str | int]) -> None:
+    plt.clf()
     graph = nx.Graph()
 
     # Nodes.
-    colors: list[list[str]] = get_colors(cycles=cycles)
+    colors: list[list[str]] = get_colors(cycles=clusters_cycles)
     for i, point in enumerate(instance.itertuples()):
         graph.add_node(i, pos=(point.latitude, point.longitude))
 
     # Clusters cycle.
-    for cluster_cycle in cycles[0]:
-        cluster: int = instance.loc[cluster_cycle[0], 'cluster']
-        for i in range(len(cluster_cycle) - 1):
-            graph.edge(tail_name=str(cluster_cycle[i]), head_name=str(cluster_cycle[i + 1]),
-                       color=colors[cluster], penwidth='1')
+    # for cluster_cycle in cycles[0]:
+    #     cluster: int = instance.loc[cluster_cycle[0], 'cluster']
+    #     for i in range(len(cluster_cycle) - 1):
+    #         graph.edge(tail_name=str(cluster_cycle[i]), head_name=str(cluster_cycle[i + 1]),
+    #                    color=colors[cluster], penwidth='1')
+
+    nx.draw(G=graph)
+    plt.savefig(fname='outputs/networkx_graph.pdf', transparent=True, bbox_inches='tight')
 
 
 def get_colors(cycles: list[list[list[str | int]]]) -> list[list[str]]:
     colors: list[list[str]] = []
 
-    hue_step: float = 1.0 / (len(cycles) - 1)
+    hue_step: float = 1.0 / (len(cycles))
     current_hue: float = 0.0
     for current_cluster in cycles:
         current_cluster_colors: list[str] = []
 
-        saturation_step: float = 1.0 / (len(current_cluster) - 1)
-        current_saturation: float = 0.0
+        saturation_step: float = 1.0 / (len(current_cluster))
+        current_saturation: float = saturation_step
         for i in range(len(current_cluster)):
             current_cluster_colors.append(
-                f'{current_hue:.3f} 1.000 {current_saturation:.3f}')
+                f'{current_hue:.3f} {current_saturation:.3f} 1.000')
 
             current_saturation += saturation_step
 

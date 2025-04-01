@@ -88,20 +88,14 @@ def calculate_k_means_clusters(instance: DataFrame, number_of_clusters: int) -> 
     return clusters, hubs
 
 
-def calculate_sub_cluster(cluster: DataFrame, maximum_number_of_points_per_sub_cluster: int | None = None,
-                          number_of_sub_clusters: int | None = None) -> tuple[np.ndarray[np.int32], Series]:
-    if (maximum_number_of_points_per_sub_cluster is None) and (number_of_sub_clusters is None):
-        print('There is nothing to be done!')
-        return
-    elif maximum_number_of_points_per_sub_cluster is None:
-        maximum_number_of_points_per_sub_cluster = int(np.ceil(len(cluster) / number_of_sub_clusters))
-    else:
-        number_of_sub_clusters = int(np.ceil(len(cluster) / maximum_number_of_points_per_sub_cluster))
+def calculate_sub_cluster(cluster: DataFrame, maximum_number_of_points_per_sub_cluster: int,
+                          minimum_number_of_points_per_sub_cluster: int) -> tuple[np.ndarray[np.int32], Series]:
+    number_of_sub_clusters = int(np.floor(len(cluster) / minimum_number_of_points_per_sub_cluster))
 
     scaled_data: np.ndarray[np.ndarray[np.float64]] = scale_values(cluster)
 
     k_means_constrained = KMeansConstrained(n_clusters=number_of_sub_clusters,
-                                            size_min=(maximum_number_of_points_per_sub_cluster - 1),
+                                            size_min=minimum_number_of_points_per_sub_cluster,
                                             size_max=maximum_number_of_points_per_sub_cluster, random_state=42)
     k_means_constrained.fit_predict(X=scaled_data)
 
