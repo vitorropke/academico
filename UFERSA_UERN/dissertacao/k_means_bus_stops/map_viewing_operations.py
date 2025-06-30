@@ -28,6 +28,9 @@ def generate_cluster_map(instance: DataFrame, cycles: list[list[list[str | int]]
     hubs: DataFrame = instance[instance['hub'] == 1]
     plt.scatter(x=hubs['longitude'], y=hubs['latitude'], s=100, marker='X')
 
+    plt.xlabel('Longitude')
+    plt.ylabel('Latitude')
+
     plt.savefig(fname='outputs/clusters.pdf', transparent=True, bbox_inches='tight')
 
 
@@ -46,7 +49,7 @@ def generate_coordinates(instance: DataFrame) -> None:
 
 
 def generate_graph(instance: DataFrame, clusters_cycles: list[list[list[str | int]]],
-                   hubs_cycle: list[str | int]) -> None:
+                   hubs_trail: list[list[str | int]]) -> None:
     graph: Graph = Graph(engine='neato')
 
     # Nodes.
@@ -66,15 +69,15 @@ def generate_graph(instance: DataFrame, clusters_cycles: list[list[list[str | in
             for i in range(len(current_sub_cluster_cycle) - 1):
                 graph.edge(tail_name=str(current_sub_cluster_cycle[i]), head_name=str(current_sub_cluster_cycle[i + 1]),
                            color=colors[cluster][sub_cluster], penwidth='1')
-    # Hubs cycle.
-    for i in range(len(hubs_cycle) - 1):
-        graph.edge(tail_name=str(hubs_cycle[i]), head_name=str(hubs_cycle[i + 1]), penwidth='100')
+    # Hubs trail.
+    for current_adjacency in hubs_trail:
+        graph.edge(tail_name=str(current_adjacency[0]), head_name=str(current_adjacency[1]), penwidth='10')
 
     graph.render(filename='outputs/graphviz_graph', format='pdf')
 
 
 def generate_map(instance: DataFrame, clusters_cycles: list[list[list[str | int]]],
-                 hubs_cycle: list[str | int]) -> None:
+                 hubs_trail: list[list[str | int]]) -> None:
     plt.clf()
     graph = nx.Graph()
 

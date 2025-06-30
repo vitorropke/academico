@@ -14,11 +14,21 @@ def calculate_hierarchical_clusters(instance: DataFrame) -> tuple[np.ndarray[np.
     linkage_matrix: np.ndarray[np.ndarray[np.float64]] = linkage(y=scaled_data, method='ward',
                                                                  optimal_ordering=True)
     cophenetic_correlation_coefficient: np.float64 = cophenet(linkage_matrix, pdist(scaled_data))[0]
-    print(cophenetic_correlation_coefficient)
+    # print(cophenetic_correlation_coefficient)
 
     plt.figure()
-    dendrogram(Z=linkage_matrix, p=4, truncate_mode='lastp', color_threshold=(0.5 * linkage_matrix[-1:, 2]),
-               leaf_font_size=10, leaf_rotation=45)
+
+    # dendrogram(Z=linkage_matrix, p=4, truncate_mode='lastp', color_threshold=0.0)
+    # plt.xlabel('Número de paradas')
+    # plt.ylabel('Distância entre clusters')
+
+    dendrogram(Z=linkage_matrix, color_threshold=0.0)
+    ax = plt.gca()
+    for label in ax.get_xticklabels():
+        label.set_color('white')
+    plt.xlabel('Paradas ou clusters')
+    plt.ylabel('Distância entre paradas ou clusters')
+
     plt.savefig(fname='outputs/dendrogram.pdf', transparent=True, bbox_inches='tight')
 
     # option: int = int(input('Enter the option you want\n'
@@ -40,6 +50,8 @@ def calculate_hierarchical_clusters(instance: DataFrame) -> tuple[np.ndarray[np.
 
     centroids: np.ndarray[np.ndarray[np.float64]] = np.array(
         object=[scaled_data[clusters == i].mean(axis=0) for i in np.unique(ar=clusters)])
+    print(centroids)
+    exit(0)
     distances_to_centroids: np.ndarray[np.ndarray[np.float64]] = cdist(XA=scaled_data, XB=centroids, metric='euclidean')
     hubs: np.ndarray[np.int64] = np.argmin(a=distances_to_centroids, axis=0)
     instance['hub'] = np.where(instance.index.isin(instance.index[hubs]), 1, 0)
