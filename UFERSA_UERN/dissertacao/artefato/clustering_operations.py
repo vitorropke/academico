@@ -29,18 +29,18 @@ def perform_clustering(instance: DataFrame) -> pd.Series:
     return pd.Series(data=(clusters - 1), index=od_matrix_with_population.index)
 
 
-def calculate_subclusters(instance: DataFrame, minimum_number_of_points: int,
-                          maximum_number_of_points: int) -> pd.Series:
-    number_of_clusters: int = int(np.floor(len(instance.index) / minimum_number_of_points))
-    clusters = KMeansConstrained(n_clusters=number_of_clusters, size_min=minimum_number_of_points,
-                                 size_max=maximum_number_of_points, random_state=42)
+def calculate_subclusters(instance: DataFrame, minimum_number_of_points_per_subcluster: int,
+                          maximum_number_of_points_per_subcluster: int) -> pd.Series:
+    number_of_clusters: int = int(np.floor(len(instance.index) / minimum_number_of_points_per_subcluster))
+    clusters = KMeansConstrained(n_clusters=number_of_clusters, size_min=minimum_number_of_points_per_subcluster,
+                                 size_max=maximum_number_of_points_per_subcluster, random_state=42)
     clusters.fit_predict(X=instance)
 
     return pd.Series(data=clusters.labels_, index=instance.index)
 
 
-def perform_subclustering(instance: DataFrame, minimum_number_of_points: int,
-                          maximum_number_of_points: int) -> pd.Series:
+def perform_subclustering(instance: DataFrame, minimum_number_of_points_per_subcluster: int,
+                          maximum_number_of_points_per_subcluster: int) -> pd.Series:
     od_matrix_with_population: DataFrame = instance[instance.index.tolist() + ['population', 'cluster']]
 
     subclusters: list[Series] = [pd.Series() for _ in range(od_matrix_with_population['cluster'].nunique())]
@@ -48,6 +48,7 @@ def perform_subclustering(instance: DataFrame, minimum_number_of_points: int,
     for cluster_number, cluster_data in od_matrix_with_population.groupby(by='cluster'):
         subclusters[cluster_number] = calculate_subclusters(
             instance=cluster_data[cluster_data.index.tolist() + ['population']],
-            minimum_number_of_points=minimum_number_of_points, maximum_number_of_points=maximum_number_of_points)
+            minimum_number_of_points_per_subcluster=minimum_number_of_points_per_subcluster,
+            maximum_number_of_points_per_subcluster=maximum_number_of_points_per_subcluster)
 
     return pd.concat(objs=subclusters)
