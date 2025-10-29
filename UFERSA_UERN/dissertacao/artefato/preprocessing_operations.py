@@ -49,18 +49,19 @@ def remove_too_close_points(instance: DataFrame, distance_threshold: int) -> Dat
     return instance_copy.drop(index=list(points_to_remove), columns=list(points_to_remove))
 
 
-def pop_central_point(instance: DataFrame) -> tuple[str, DataFrame]:
+def pop_central_point(instance: DataFrame) -> tuple[Series, DataFrame]:
     instance_copy: DataFrame = instance.copy()
 
     od_matrix: DataFrame = instance_copy[instance_copy.index.tolist()]
 
     # Get central point.
     central_point_name: str = od_matrix.sum(axis='columns').idxmin()
+    central_point: Series = instance.loc[central_point_name]
 
     # Remove central point.
     instance_copy = instance_copy.drop(index=central_point_name, columns=central_point_name)
 
-    return central_point_name, instance_copy
+    return central_point, instance_copy
 
 
 def scale_the_data(instance: DataFrame, population_influence_factor: float) -> DataFrame:

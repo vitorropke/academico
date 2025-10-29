@@ -31,8 +31,8 @@ def perform_clustering(instance: DataFrame) -> pd.Series:
 
 def calculate_subclusters(instance: DataFrame, minimum_number_of_points_per_subcluster: int,
                           maximum_number_of_points_per_subcluster: int) -> pd.Series:
-    number_of_clusters: int = int(np.floor(len(instance.index) / minimum_number_of_points_per_subcluster))
-    clusters = KMeansConstrained(n_clusters=number_of_clusters, size_min=minimum_number_of_points_per_subcluster,
+    number_of_subclusters: int = int(np.floor(len(instance.index) / minimum_number_of_points_per_subcluster))
+    clusters = KMeansConstrained(n_clusters=number_of_subclusters, size_min=minimum_number_of_points_per_subcluster,
                                  size_max=maximum_number_of_points_per_subcluster, random_state=42)
     clusters.fit_predict(X=instance)
 

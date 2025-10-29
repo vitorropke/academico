@@ -16,21 +16,20 @@ def find_hubs(instance: DataFrame) -> list[str]:
 
 
 def create_greedy_cycle(instance: DataFrame, origin_destination: str) -> list[str]:
-    number_of_points: int = len(instance)
+    instance_copy: DataFrame = instance.copy()
+    instance_copy = instance_copy.drop(index=origin_destination, columns=origin_destination, errors='ignore')
 
-    cycle: list[str] = [origin_destination for _ in range(number_of_points + 1)]
+    number_of_points: int = len(instance_copy)
+
+    cycle: list[str] = [origin_destination for _ in range(number_of_points + 2)]
 
     visited_points: set[str] = set()
-    visited_points.add(origin_destination)
-    current_point: str = instance.index.values.tolist()[0]
+    current_point: str = instance_copy.index[0]
     for i in range(1, number_of_points):
-        visited_points.add(current_point)
         cycle[i] = current_point
-
-        if len(visited_points) == number_of_points:
-            break
-
-        current_point = instance.loc[current_point].drop(labels=list(visited_points), errors='ignore').idxmin()
+        visited_points.add(current_point)
+        current_point = instance_copy.loc[current_point].drop(labels=list(visited_points), errors='ignore').idxmin()
+    cycle[-2] = current_point
 
     return cycle
 
@@ -51,7 +50,7 @@ def create_cycles(instance: DataFrame, hubs: list[str]) -> list[list[list[str]]]
 def calculate_cycle_cost(instance: DataFrame, cycle: list[str]) -> int:
     cost: int = 0
 
-    for i in range(len(cycle) - 1):
-        cost += instance.at[cycle[i], cycle[i + 1]]
+    for origin, destination in zip(cycle, cycle[1:]):
+        cost += instance.at[origin, destination].item()
 
     return cost
