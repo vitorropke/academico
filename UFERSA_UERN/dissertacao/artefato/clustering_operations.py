@@ -6,49 +6,54 @@ from pandas import DataFrame, Series
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 
 
-def perform_clustering(instance: DataFrame) -> pd.Series:
-    od_matrix_with_population: DataFrame = instance[instance.index.tolist() + ['population']]
+def perform_clustering(inst: DataFrame) -> pd.Series:
+    print('Fazendo a clusterização.')
 
-    linkage_matriz: np.ndarray[np.ndarray[np.float64]] = linkage(y=od_matrix_with_population, method='ward')
+    od_matrix_with_population: DataFrame = inst.loc[:, inst.index.tolist() + ['population']]
+
+    linkage_matrix: np.ndarray[np.ndarray[np.float64]] = linkage(y=od_matrix_with_population, method='ward')
 
     # Show dendrogram.
     plt.figure()
     # Complete dendrogram.
-    dendrogram(Z=linkage_matriz, color_threshold=0.0)
+    dendrogram(Z=linkage_matrix, color_threshold=0.0)
     # Partial dendrogram.
-    # dendrogram(Z=linkage_matriz, p=4, truncate_mode='lastp', color_threshold=0.0)
+    # dendrogram(Z=linkage_matrix, p=4, truncate_mode='lastp', color_threshold=0.0)
     # plt.show(block=False)
     # plt.pause(interval=4)
 
     # Define the clusters.
-    # number_of_clusters: int = int(input('Digite o número de clusters desejado: '))
-    number_of_clusters = 4
-    clusters: np.ndarray[np.int32] = fcluster(Z=linkage_matriz, t=number_of_clusters, criterion='maxclust')
+    # num_clusters: int = int(input('Digite o número de clusters desejado: '))
+    num_clusters: int = 4
+    clusters: np.ndarray[np.int32] = fcluster(Z=linkage_matrix, t=num_clusters, criterion='maxclust')
 
-    # - 1 to make clusters start from 0
+    # - 1 to make clusters start from 0.
     return pd.Series(data=(clusters - 1), index=od_matrix_with_population.index)
 
 
-def calculate_subclusters(instance: DataFrame, minimum_number_of_points_per_subcluster: int,
-                          maximum_number_of_points_per_subcluster: int) -> pd.Series:
-    number_of_subclusters: int = int(np.floor(len(instance.index) / minimum_number_of_points_per_subcluster))
-    clusters = KMeansConstrained(n_clusters=number_of_subclusters, size_min=minimum_number_of_points_per_subcluster,
-                                 size_max=maximum_number_of_points_per_subcluster, random_state=42)
-    clusters.fit_predict(X=instance)
+def calculate_subclusters(inst: DataFrame, min_num_points_per_subcluster: int,
+                          max_num_points_per_subcluster: int) -> pd.Series:
+    num_subclusters: int = int(np.floor(len(inst.index) / min_num_points_per_subcluster))
+    subclusters: KMeansConstrained = KMeansConstrained(n_clusters=num_subclusters,
+                                                       size_min=min_num_points_per_subcluster,
+                                                       size_max=max_num_points_per_subcluster, random_state=42)
+    subclusters.fit_predict(X=inst)
 
-    return pd.Series(data=clusters.labels_, index=instance.index)
+    return pd.Series(data=subclusters.labels_, index=inst.index)
 
 
-def perform_subclustering(instance: DataFrame, minimum_number_of_points_per_subcluster: int,
-                          maximum_number_of_points_per_subcluster: int) -> pd.Series:
-    od_matrix_with_population: DataFrame = instance[instance.index.tolist() + ['population', 'cluster']]
+def perform_subclustering(inst: DataFrame, min_num_points_per_subcluster: int,
+                          max_num_points_per_subcluster: int) -> pd.Series:
+    print('Fazendo a sub-clusterização.')
+    od_matrix_with_population_and_cluster: DataFrame = inst.loc[:, inst.index.tolist() + ['population', 'cluster']]
 
-    subclusters: list[Series] = [pd.Series() for _ in range(od_matrix_with_population['cluster'].nunique())]
+    subclusters: list[Series] = [pd.Series() for _ in
+                                 range(od_matrix_with_population_and_cluster.loc[:, 'cluster'].nunique())]
 
-    for cluster_number, cluster_data in od_matrix_with_population.groupby(by='cluster'):
-        subclusters[cluster_number] = calculate_subclusters(
-            instance=cluster_data[cluster_data.index.tolist() + ['population']],
-            minimum_number_of_points_per_subcluster=minimum_number_of_points_per_subcluster,
-            maximum_number_of_points_per_subcluster=maximum_number_of_points_per_subcluster)
+    for cluster_num, cluster_data in od_matrix_with_population_and_cluster.groupby(by='cluster'):
+        subclusters[cluster_num] = calculate_subclusters(
+            inst=cluster_data.loc[:, cluster_data.index.tolist() + ['population']],
+            min_num_points_per_subcluster=min_num_points_per_subcluster,
+            max_num_points_per_subcluster=max_num_points_per_subcluster)
 
     return pd.concat(objs=subclusters)
