@@ -43,7 +43,7 @@ def get_colors(cycles: list[list[list[str]]]) -> list[list[str]]:
     return colors
 
 
-def generate_interactive_map(inst: DataFrame, central_point: Series, hubs: list[tuple[float, float]],
+def generate_interactive_map(inst: DataFrame, major_hub: str, hubs: list[tuple[float, float]],
                              cycles: list[list[list[tuple[float, float]]]], colors: list[list[str]],
                              filepath: str) -> None:
     interactive_map: Map = folium.Map(location=((inst.loc[:, 'latitude'].max() + inst.loc[:, 'latitude'].min()) / 2.0, (
@@ -61,21 +61,18 @@ def generate_interactive_map(inst: DataFrame, central_point: Series, hubs: list[
                                                                        icon='bus-simple', prefix='fa'))).add_to(
             parent=interactive_map)
 
-    folium.Marker(location=(central_point.loc['latitude'], central_point.loc['longitude']), tooltip=central_point.name,
-                  icon=hub_icon).add_to(parent=interactive_map)
-
     for i in range(len(cycles)):
         for j in range(len(cycles[i])):
             folium.PolyLine(locations=cycles[i][j], color=colors[i][j]).add_to(interactive_map)
 
     for i in range(len(hubs)):
-        folium.PolyLine(locations=(hubs[i], (central_point.loc['latitude'], central_point.loc['longitude'])),
+        folium.PolyLine(locations=(hubs[i], (major_hub.loc['latitude'], major_hub.loc['longitude'])),
                         color='grey', weight=8).add_to(interactive_map)
 
     interactive_map.save(outfile=filepath)
 
 
-def generate_static_map(inst: DataFrame, central_point: Series, hubs: list[tuple[float, float]],
+def generate_static_map(inst: DataFrame, major_hub: str, hubs: list[tuple[float, float]],
                         cycles: list[list[list[tuple[float, float]]]], filepath: str) -> None:
     imagery: OSM = OSM()
     fig: Figure = plt.figure()
