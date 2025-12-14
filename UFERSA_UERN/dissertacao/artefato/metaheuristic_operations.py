@@ -1,42 +1,39 @@
+import time
+
 import pandas as pd
 from pandas import DataFrame, Series
 
 from connection_operations import calculate_cycle_cost
 
 
-def perform_two_opt(cycle: list[str]) -> list[list[str]]:
+def perform_two_opt(inst: DataFrame, cycle: list[str]) -> list[str]:
     print('Fazendo o 2-opt.')
 
-    cycle_copy: list[str] = cycle.copy()
-    num_points: int = len(cycle_copy)
+    best_cycle: list[str] = cycle.copy()
 
-    # The formula used to initialize this list is just the inverse of the loop below.
-    opted_cycles: list[list[str]] = [[] for _ in range(int(((num_points - 2) * ((num_points - 3) / 2)) + 1))]
-
+    curr_cycle: list[str] = best_cycle.copy()
+    best_cost: int = calculate_cycle_cost(inst=inst, cycle=best_cycle)
+    num_points: int = len(best_cycle)
     # Starts at 1(i) and ends at n-1(j) so as not to modify the hub.
-    opted_cycles_idx: int = 0
-    opted_cycles[opted_cycles_idx] = cycle_copy.copy()
     for i in range(1, num_points - 2):
         for j in range(i + 1, num_points - 1):
-            cycle_copy.insert(i, cycle_copy.pop(j))
-            opted_cycles_idx += 1
-            opted_cycles[opted_cycles_idx] = cycle_copy.copy()
+            curr_cycle.insert(i, curr_cycle.pop(j))
+            curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
+            if curr_cost < best_cost:
+                best_cycle = curr_cycle.copy()
+                best_cost = curr_cost
 
-    return opted_cycles
+    return best_cycle
 
 
-def perform_three_opt(cycle: list[str]) -> list[list[str]]:
+def perform_three_opt(inst: DataFrame, cycle: list[str]) -> list[str]:
     print('Fazendo o 3-opt.')
 
     cycle_copy: list[str] = cycle.copy()
+
+    initial_cost: int = calculate_cycle_cost(inst=inst, cycle=cycle_copy)
     num_points: int = len(cycle_copy)
-
-    # The formula used to initialize this list is just the inverse of the loop below.
-    opted_cycles: list[list[str]] = [[] for _ in range(
-        int(((num_points - 2) * ((num_points - 3) / 2) * ((num_points - 4) / 3) * 7) + 1))]
-
-    opted_cycles_idx: int = 0
-    opted_cycles[opted_cycles_idx] = cycle_copy.copy()
+    # Starts at 1(i) and ends at n-1(k) so as not to modify the hub.
     for i in range(1, num_points - 3):
         for j in range(i + 1, num_points - 2):
             for k in range(j + 1, num_points - 1):
@@ -45,80 +42,85 @@ def perform_three_opt(cycle: list[str]) -> list[list[str]]:
                 segment3: list[str] = cycle_copy[j:k]
                 segment4: list[str] = cycle_copy[k:]
 
+                curr_cycle: list[str]
+
                 # segment 1 + segment 2 (reversed) + segment 3 + segment 4
-                opted_cycles_idx += 1
-                opted_cycles[opted_cycles_idx] = segment1 + segment2[::-1] + segment3 + segment4
+                curr_cycle = segment1 + segment2[::-1] + segment3 + segment4
+                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
+                if curr_cost < initial_cost:
+                    return curr_cycle
+
                 # segment 1 + segment 2 + segment 3 (reversed) + segment 4
-                opted_cycles_idx += 1
-                opted_cycles[opted_cycles_idx] = segment1 + segment2 + segment3[::-1] + segment4
+                curr_cycle = segment1 + segment2 + segment3[::-1] + segment4
+                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
+                if curr_cost < initial_cost:
+                    return curr_cycle
+
                 # segment 1 + segment 2 (reversed) + segment 3 (reversed) + segment 4
-                opted_cycles_idx += 1
-                opted_cycles[opted_cycles_idx] = segment1 + segment2[::-1] + segment3[::-1] + segment4
+                curr_cycle = segment1 + segment2[::-1] + segment3[::-1] + segment4
+                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
+                if curr_cost < initial_cost:
+                    return curr_cycle
+
                 # segment 1 + segment 3 + segment 2 + segment 4
-                opted_cycles_idx += 1
-                opted_cycles[opted_cycles_idx] = segment1 + segment3 + segment2 + segment4
+                curr_cycle = segment1 + segment3 + segment2 + segment4
+                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
+                if curr_cost < initial_cost:
+                    return curr_cycle
+
                 # segment 1 + segment 3 (reversed) + segment 2 + segment 4
-                opted_cycles_idx += 1
-                opted_cycles[opted_cycles_idx] = segment1 + segment3[::-1] + segment2 + segment4
+                curr_cycle = segment1 + segment3[::-1] + segment2 + segment4
+                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
+                if curr_cost < initial_cost:
+                    return curr_cycle
+
                 # segment 1 + segment 3 + segment 2 (reversed) + segment 4
-                opted_cycles_idx += 1
-                opted_cycles[opted_cycles_idx] = segment1 + segment3 + segment2[::-1] + segment4
+                curr_cycle = segment1 + segment3 + segment2[::-1] + segment4
+                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
+                if curr_cost < initial_cost:
+                    return curr_cycle
+
                 # segment 1 + segment 3 (reversed) + segment 2 (reversed) + segment 4
-                opted_cycles_idx += 1
-                opted_cycles[opted_cycles_idx] = segment1 + segment3[::-1] + segment2[::-1] + segment4
+                curr_cycle = segment1 + segment3[::-1] + segment2[::-1] + segment4
+                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
+                if curr_cost < initial_cost:
+                    return curr_cycle
 
-    return opted_cycles
+    return cycle_copy
 
 
-def perform_swap(cycle: list[str]) -> list[list[str]]:
+def perform_swap(inst: DataFrame, cycle: list[str]) -> list[str]:
     print('Fazendo o swap.')
 
-    cycle_copy: list[str] = cycle.copy()
-    num_points: int = len(cycle_copy)
+    best_cycle: list[str] = cycle.copy()
 
-    # The formula used to initialize this list is just the inverse of the loop below.
-    opted_cycles: list[list[str]] = [[] for _ in range(int(((num_points - 2) * ((num_points - 3) / 2)) + 1))]
-
+    curr_cycle: list[str] = best_cycle.copy()
+    best_cost: int = calculate_cycle_cost(inst=inst, cycle=best_cycle)
+    num_points: int = len(best_cycle)
     # Starts at 1(i) and ends at n-1(j) so as not to modify the hub.
-    opted_cycles_idx: int = 0
-    opted_cycles[opted_cycles_idx] = cycle_copy.copy()
     for i in range(1, num_points - 2):
         for j in range(i + 1, num_points - 1):
-            # Swap is always performed over the initial cycle. Therefore, the swap is performed and then undone before
-            # the next iteration.
-            # Perform the swap.
-            cycle_copy[i], cycle_copy[j] = cycle_copy[j], cycle_copy[i]
-            opted_cycles_idx += 1
-            opted_cycles[opted_cycles_idx] = cycle_copy.copy()
+            # Swap is always performed over the initial cycle. Therefore, the swap is done and then undone before the
+            # next iteration.
+            # Do the swap.
+            curr_cycle[i], curr_cycle[j] = curr_cycle[j], curr_cycle[i]
+            curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
+            if curr_cost < best_cost:
+                best_cycle = curr_cycle.copy()
+                best_cost = curr_cost
             # Undo the swap.
-            cycle_copy[i], cycle_copy[j] = cycle_copy[j], cycle_copy[i]
+            curr_cycle[i], curr_cycle[j] = curr_cycle[j], curr_cycle[i]
 
-    return opted_cycles
+    return best_cycle
 
 
-def perform_local_search(cycle: list[str], local_search_method: int) -> list[list[str]]:
-    print('Fazendo a busca local')
-
+def perform_local_search(inst: DataFrame, cycle: list[str], local_search_method: int) -> list[str]:
     if local_search_method == 0:
-        return perform_two_opt(cycle=cycle)
+        return perform_two_opt(inst=inst, cycle=cycle)
     elif local_search_method == 1:
-        return perform_three_opt(cycle=cycle)
+        return perform_three_opt(inst=inst, cycle=cycle)
     else:
-        return perform_swap(cycle=cycle)
-
-
-def perform_best_improvement(opted_cycles: list[list[str]], opted_cycle_costs: list[int]) -> list[str]:
-    lowest_cost_idx: int = opted_cycle_costs.index(min(opted_cycle_costs))
-    return opted_cycles[lowest_cost_idx].copy()
-
-
-def perform_first_improvement(opted_cycles: list[list[str]], opted_cycle_costs: list[int]) -> list[str]:
-    default_idx: int = 0
-    best_cost: int = opted_cycle_costs[default_idx]
-    for opted_cycle, opted_cycle_cost in zip(opted_cycles, opted_cycle_costs):
-        if opted_cycle_cost < best_cost:
-            return opted_cycle.copy()
-    return opted_cycles[default_idx].copy()
+        return perform_swap(inst=inst, cycle=cycle)
 
 
 def perform_vnd_neighborhood_change_sequential(inst: DataFrame, old_cycle: list[str], new_cycle: list[str],
@@ -145,13 +147,8 @@ def perform_vnd(inst: DataFrame, cycles: list[list[str]]) -> list[list[str]]:
         curr_local_search_method: int = 0
         num_local_search_methods: int = 3
         while curr_local_search_method < num_local_search_methods:
-            opted_cycles: list[list[str]] = perform_local_search(cycle=curr_cycle,
-                                                                 local_search_method=curr_local_search_method)
-            opted_cycle_costs: list[int] = [calculate_cycle_cost(inst=inst, cycle=opted_cycle) for opted_cycle in
-                                            opted_cycles]
-
-            new_cycle: list[str] = perform_first_improvement(opted_cycles=opted_cycles,
-                                                             opted_cycle_costs=opted_cycle_costs)
+            new_cycle: list[str] = perform_local_search(inst=inst, cycle=curr_cycle,
+                                                        local_search_method=curr_local_search_method)
             curr_cycle, curr_local_search_method = perform_vnd_neighborhood_change_sequential(inst=inst,
                                                                                               old_cycle=curr_cycle,
                                                                                               new_cycle=new_cycle,
@@ -162,12 +159,12 @@ def perform_vnd(inst: DataFrame, cycles: list[list[str]]) -> list[list[str]]:
     return cycles_copy
 
 
-def get_points(inst: DataFrame, orig: str, dests: list[str], num_nearest_points: int = 10, num_points: int = 1) -> \
-        tuple[str, str]:
+def get_points(inst: DataFrame, orig: str, dests: list[str], random_state: int, num_nearest_points: int = 10,
+               num_points: int = 1) -> tuple[str, str]:
     # Select the 'n' nearest points around the origin.
     nearest_points: Series = inst.loc[dests, orig].nsmallest(n=num_nearest_points)
-    # Select one point randomly and the nearest point to the origin.
-    return nearest_points.sample(n=num_points, random_state=42).index.item(), nearest_points.index[0]
+    # Select 'n' points randomly and the nearest point to the origin.
+    return nearest_points.sample(n=num_points, random_state=random_state).index.item(), nearest_points.index[0]
 
 
 def get_pairs_of_points(inst: DataFrame, origs: list[str], dests: list[str], distance_threshold: int = 500) -> Series:
@@ -180,8 +177,8 @@ def get_pairs_of_points(inst: DataFrame, origs: list[str], dests: list[str], dis
 def find_dest_idx(inst: DataFrame, orig_point: str, dest_cycle: list[str], dest_point_idx: int) -> int:
     # Check the distance from the origin point to the adjacent points of the destination point in the destination cycle.
     # If the nearest adjacent is to the left of the destination point, the destination index will be the index of the
-    # destination point itself, because using the `insert` command will shift the destination point and the rest of the
-    # list to the right, keeping the origin point to the left of the destination point.
+    # destination point itself. That's because using the `insert` command will shift the destination point and the rest
+    # of the list to the right, keeping the origin point to the left of the destination point.
     # If the nearest adjacent is to the right of the destination point, the destination index will be to the right of
     # the destination point. That is, the index of the destination point + 1.
     left_adjacent_idx: int = (dest_point_idx - 1) % len(dest_cycle)
@@ -193,7 +190,8 @@ def find_dest_idx(inst: DataFrame, orig_point: str, dest_cycle: list[str], dest_
 
 
 def replace_cluster_hub(inst: DataFrame, cycles: list[list[str]], hubs_tabu_list: set[str],
-                        min_num_points_per_cycle: int, max_num_points_per_cycle: int) -> list[list[str]]:
+                        min_num_points_per_cycle: int, max_num_points_per_cycle: int, random_state: int) -> list[
+    list[str]]:
     print('Trocando o hub do cluster.')
 
     cycles_copy: list[list[str]] = [cycle.copy() for cycle in cycles]
@@ -206,7 +204,8 @@ def replace_cluster_hub(inst: DataFrame, cycles: list[list[str]], hubs_tabu_list
 
     new_hub: str
     nearest_point_to_old_hub: str
-    new_hub, nearest_point_to_old_hub = get_points(inst=inst, orig=old_hub, dests=flat_cycles_without_old_hubs)
+    new_hub, nearest_point_to_old_hub = get_points(inst=inst, orig=old_hub, dests=flat_cycles_without_old_hubs,
+                                                   random_state=random_state)
 
     for i, cycle in enumerate(cycles_copy):
         curr_cycle: list[str] = cycle.copy()
@@ -247,7 +246,8 @@ def replace_cluster_hub(inst: DataFrame, cycles: list[list[str]], hubs_tabu_list
     return cycles_copy
 
 
-def swap_points_between_cycles(inst: DataFrame, cycles: list[list[str]]) -> list[list[str]]:
+def swap_points_between_cycles(inst: DataFrame, cycles: list[list[str]], swaps_tabu_list: set[tuple[str, str]],
+                               random_state: int) -> list[list[str]]:
     print('Trocando pontos entre ciclos.')
 
     cycles_copy: list[list[str]] = [cycle.copy() for cycle in cycles]
@@ -263,10 +263,19 @@ def swap_points_between_cycles(inst: DataFrame, cycles: list[list[str]]) -> list
 
     pairs_of_points: Series = pd.concat(objs=pairs_of_points_by_orig_dest_cycles)
 
+    # Exclude all swaps that are in the swap tabu list.
+    pairs_of_points = pairs_of_points[~pairs_of_points.index.isin(swaps_tabu_list)]
+
+    # If there are no pairs of points, return the original cycles.
+    if pairs_of_points.empty:
+        return cycles
+
     # Get one pair of points.
-    points_to_swap: Series = pairs_of_points.sample(n=1, random_state=42)
+    points_to_swap: Series = pairs_of_points.sample(n=1, random_state=random_state)
     point0: str = points_to_swap.index[0][0]
     point1: str = points_to_swap.index[0][1]
+
+    swaps_tabu_list.add((point0, point1))
 
     # Find the indexes of the pair of points.
     # tuple[index of the cycle in the cluster, index of the point in the cycle]
@@ -292,8 +301,9 @@ def swap_points_between_cycles(inst: DataFrame, cycles: list[list[str]]) -> list
     return cycles_copy
 
 
-def move_point_between_cycles(inst: DataFrame, cycles: list[list[str]], min_num_points_per_cycle: int,
-                              max_num_points_per_cycle: int) -> list[list[str]]:
+def move_point_between_cycles(inst: DataFrame, cycles: list[list[str]], moves_tabu_list: set[tuple[str, str]],
+                              min_num_points_per_cycle: int, max_num_points_per_cycle: int, random_state: int) -> list[
+    list[str]]:
     print('Movendo um ponto de um ciclo para outro.')
 
     cycles_copy: list[list[str]] = [cycle.copy() for cycle in cycles]
@@ -307,8 +317,8 @@ def move_point_between_cycles(inst: DataFrame, cycles: list[list[str]], min_num_
         if len(cycle[1:-1]) < max_num_points_per_cycle:
             receivable_cycles.add(i)
 
-    # If it doesn't exist giveable or receivable cycles,
-    # or there's only one giveable and receivable cycle, and they're the same, return the original cycles.
+    # If it doesn't exist giveable or receivable cycles, or there's only one giveable and receivable cycle, and they're
+    # the same, return the original cycles.
     if (len(giveable_cycles) == 0) or (len(receivable_cycles) == 0) or (
             (len(giveable_cycles) == 1) and (len(receivable_cycles) == 1) and (giveable_cycles == receivable_cycles)):
         return cycles
@@ -326,10 +336,19 @@ def move_point_between_cycles(inst: DataFrame, cycles: list[list[str]], min_num_
 
     pairs_of_points: Series = pd.concat(objs=pairs_of_points_by_giveable_receivable_cycles)
 
+    # Exclude all moves that are in the move tabu list.
+    pairs_of_points = pairs_of_points[~pairs_of_points.index.isin(moves_tabu_list)]
+
+    # If there are no pairs of points, return the original cycles.
+    if pairs_of_points.empty:
+        return cycles
+
     # Get one pair of points.
-    moving_and_fixed_point: Series = pairs_of_points.sample(n=1, random_state=42)
+    moving_and_fixed_point: Series = pairs_of_points.sample(n=1, random_state=random_state)
     moving_point: str = moving_and_fixed_point.index[0][0]
     fixed_point: str = moving_and_fixed_point.index[0][1]
+
+    moves_tabu_list.add((moving_point, fixed_point))
 
     # Find the indexes of the pair of points.
     # tuple[index of the cycle in the cluster, index of the point in the cycle]
@@ -360,37 +379,41 @@ def move_point_between_cycles(inst: DataFrame, cycles: list[list[str]], min_num_
 
 
 def perform_cluster_shake(inst: DataFrame, cycles: list[list[str]], hubs_tabu_list: set[str],
-                          min_num_points_per_cycle: int, max_num_points_per_cycle: int, shake_method: int) -> list[
-    list[str]]:
+                          swaps_tabu_list: set[tuple[str, str]], moves_tabu_list: set[tuple[str, str]],
+                          min_num_points_per_cycle: int, max_num_points_per_cycle: int, shake_method: int,
+                          random_state: int) -> list[list[str]]:
     print('Fazendo o shake do cluster.')
 
     if shake_method == 0:
         return replace_cluster_hub(inst=inst, cycles=cycles, hubs_tabu_list=hubs_tabu_list,
                                    min_num_points_per_cycle=min_num_points_per_cycle,
-                                   max_num_points_per_cycle=max_num_points_per_cycle)
+                                   max_num_points_per_cycle=max_num_points_per_cycle, random_state=random_state)
     elif shake_method == 1:
-        return swap_points_between_cycles(inst=inst, cycles=cycles)
+        return swap_points_between_cycles(inst=inst, cycles=cycles, swaps_tabu_list=swaps_tabu_list,
+                                          random_state=random_state)
     else:
-        return move_point_between_cycles(inst=inst, cycles=cycles, min_num_points_per_cycle=min_num_points_per_cycle,
-                                         max_num_points_per_cycle=max_num_points_per_cycle)
+        return move_point_between_cycles(inst=inst, cycles=cycles, moves_tabu_list=moves_tabu_list,
+                                         min_num_points_per_cycle=min_num_points_per_cycle,
+                                         max_num_points_per_cycle=max_num_points_per_cycle, random_state=random_state)
 
 
-def replace_major_hub(inst: DataFrame, old_major_hub: str, major_hub_tabu_list: set[str], cycles: list[list[list[str]]],
-                      min_num_points_per_cycle: int, max_num_points_per_cycle: int) -> tuple[
+def replace_major_hub(inst: DataFrame, old_major_hub: str, cycles: list[list[list[str]]], major_hub_tabu_list: set[str],
+                      min_num_points_per_cycle: int, max_num_points_per_cycle: int, random_state: int) -> tuple[
     str, list[list[list[str]]]]:
-    print('Trocando o hub central.')
+    print('Trocando o grande hub.')
 
     cycles_copy: list[list[list[str]]] = [[cycle.copy() for cycle in cluster] for cluster in cycles]
 
     major_hub_tabu_list.add(old_major_hub)
 
-    flat_cycles_without_hubs_and_major_hub: list[str] = [point for cluster in cycles_copy for cycle in cluster for point
-                                                         in cycle[1:-1] if point not in major_hub_tabu_list]
+    flat_cycles_without_hubs_and_old_major_hubs: list[str] = [point for cluster in cycles_copy for cycle in cluster for
+                                                              point in cycle[1:-1] if point not in major_hub_tabu_list]
 
     new_major_hub: str
     nearest_point_to_old_major_hub: str
     new_major_hub, nearest_point_to_old_major_hub = get_points(inst=inst, orig=old_major_hub,
-                                                               dests=flat_cycles_without_hubs_and_major_hub)
+                                                               dests=flat_cycles_without_hubs_and_old_major_hubs,
+                                                               random_state=random_state)
 
     # Find the index of the new major hub and an index to put the old major hub.
     # tuple[index of the cluster, index of the cycle in the cluster, index of the point in the cycle]
@@ -442,7 +465,8 @@ def replace_major_hub(inst: DataFrame, old_major_hub: str, major_hub_tabu_list: 
     return new_major_hub, cycles_copy
 
 
-def swap_points_between_clusters(inst: DataFrame, cycles: list[list[list[str]]]) -> list[list[list[str]]]:
+def swap_points_between_clusters(inst: DataFrame, cycles: list[list[list[str]]], swaps_tabu_list: set[tuple[str, str]],
+                                 random_state: int) -> list[list[list[str]]]:
     print('Trocando pontos entre clusters.')
 
     cycles_copy: list[list[list[str]]] = [[cycle.copy() for cycle in cluster] for cluster in cycles]
@@ -462,10 +486,19 @@ def swap_points_between_clusters(inst: DataFrame, cycles: list[list[list[str]]])
 
     pairs_of_points: Series = pd.concat(objs=pairs_of_points_by_orig_dest_cycles)
 
+    # Exclude all swaps that are in the swap tabu list.
+    pairs_of_points = pairs_of_points[~pairs_of_points.index.isin(swaps_tabu_list)]
+
+    # If there are no pairs of points, return the original cycles.
+    if pairs_of_points.empty:
+        return cycles
+
     # Get one pair of points.
-    points_to_swap: Series = pairs_of_points.sample(n=1, random_state=42)
+    points_to_swap: Series = pairs_of_points.sample(n=1, random_state=random_state)
     point0: str = points_to_swap.index[0][0]
     point1: str = points_to_swap.index[0][1]
+
+    swaps_tabu_list.add((point0, point1))
 
     # Find the indexes of the pair of points.
     # tuple[index of the cluster, index of the cycle in the cluster, index of the point in the cycle]
@@ -495,8 +528,9 @@ def swap_points_between_clusters(inst: DataFrame, cycles: list[list[list[str]]])
     return cycles_copy
 
 
-def move_point_between_clusters(inst: DataFrame, cycles: list[list[list[str]]], min_num_points_per_cycle: int,
-                                max_num_points_per_cycle: int) -> list[list[list[str]]]:
+def move_point_between_clusters(inst: DataFrame, cycles: list[list[list[str]]], moves_tabu_list: set[tuple[str, str]],
+                                min_num_points_per_cycle: int, max_num_points_per_cycle: int, random_state: int) -> \
+        list[list[list[str]]]:
     print('Movendo um ponto de um cluster para outro.')
 
     cycles_copy: list[list[list[str]]] = [[cycle.copy() for cycle in cluster] for cluster in cycles]
@@ -511,8 +545,8 @@ def move_point_between_clusters(inst: DataFrame, cycles: list[list[list[str]]], 
             if len(cycle[1:-1]) < max_num_points_per_cycle:
                 receivable_cycles.add((i, j))
 
-    # If it doesn't exist giveable or receivable cycles,
-    # or there's only one giveable and receivable cycle, and they're the same, return the original cycles.
+    # If it doesn't exist giveable or receivable cycles, or there's only one giveable and receivable cycle, and they're
+    # the same, return the original cycles.
     if (len(giveable_cycles) == 0) or (len(receivable_cycles) == 0) or (
             (len(giveable_cycles) == 1) and (len(receivable_cycles) == 1) and (giveable_cycles == receivable_cycles)):
         return cycles
@@ -530,10 +564,19 @@ def move_point_between_clusters(inst: DataFrame, cycles: list[list[list[str]]], 
 
     pairs_of_points: Series = pd.concat(objs=pairs_of_points_by_giveable_receivable_cycles)
 
+    # Exclude all moves that are in the move tabu list.
+    pairs_of_points = pairs_of_points[~pairs_of_points.index.isin(moves_tabu_list)]
+
+    # If there are no pairs of points, return the original cycles.
+    if pairs_of_points.empty:
+        return cycles
+
     # Get one pair of points.
-    moving_and_fixed_point: Series = pairs_of_points.sample(n=1, random_state=42)
+    moving_and_fixed_point: Series = pairs_of_points.sample(n=1, random_state=random_state)
     moving_point: str = moving_and_fixed_point.index[0][0]
     fixed_point: str = moving_and_fixed_point.index[0][1]
+
+    moves_tabu_list.add((moving_point, fixed_point))
 
     # Find the indexes of the pair of points.
     # tuple[index of the cluster, index of the cycle in the cluster, index of the point in the cycle]
@@ -567,21 +610,25 @@ def move_point_between_clusters(inst: DataFrame, cycles: list[list[list[str]]], 
     return cycles_copy
 
 
-def perform_overall_shake(inst: DataFrame, major_hub: str, major_hub_tabu_list: set[str], cycles: list[list[list[str]]],
-                          min_num_points_per_cycle: int, max_num_points_per_cycle: int, shake_method: int) -> tuple[
-    str, list[list[list[str]]]]:
+def perform_overall_shake(inst: DataFrame, major_hub: str, cycles: list[list[list[str]]], major_hub_tabu_list: set[str],
+                          swaps_tabu_list: set[tuple[str, str]], moves_tabu_list: set[tuple[str, str]],
+                          min_num_points_per_cycle: int, max_num_points_per_cycle: int, shake_method: int,
+                          random_state: int) -> tuple[str, list[list[list[str]]]]:
     print('Fazendo o shake geral.')
 
     if shake_method == 0:
-        return replace_major_hub(inst=inst, old_major_hub=major_hub, major_hub_tabu_list=major_hub_tabu_list,
-                                 cycles=cycles, min_num_points_per_cycle=min_num_points_per_cycle,
-                                 max_num_points_per_cycle=max_num_points_per_cycle)
+        return replace_major_hub(inst=inst, old_major_hub=major_hub, cycles=cycles,
+                                 major_hub_tabu_list=major_hub_tabu_list,
+                                 min_num_points_per_cycle=min_num_points_per_cycle,
+                                 max_num_points_per_cycle=max_num_points_per_cycle, random_state=random_state)
     elif shake_method == 1:
-        return major_hub, swap_points_between_clusters(inst=inst, cycles=cycles)
+        return major_hub, swap_points_between_clusters(inst=inst, cycles=cycles, swaps_tabu_list=swaps_tabu_list,
+                                                       random_state=random_state)
     else:
-        return major_hub, move_point_between_clusters(inst=inst, cycles=cycles,
+        return major_hub, move_point_between_clusters(inst=inst, cycles=cycles, moves_tabu_list=moves_tabu_list,
                                                       min_num_points_per_cycle=min_num_points_per_cycle,
-                                                      max_num_points_per_cycle=max_num_points_per_cycle)
+                                                      max_num_points_per_cycle=max_num_points_per_cycle,
+                                                      random_state=random_state)
 
 
 def calculate_costs(inst: DataFrame, major_hub: str, cycles: list[list[list[str]]]) -> tuple[
@@ -608,7 +655,7 @@ def perform_cluster_neighborhood_change_sequential(inst: DataFrame, major_hub: s
 
 
 def optimize_cycles(inst: DataFrame, major_hub: str, cycles: list[list[list[str]]], min_num_points_per_cycle: int,
-                    max_num_points_per_cycle: int) -> list[list[list[str]]]:
+                    max_num_points_per_cycle: int, random_state: int) -> list[list[list[str]]]:
     cycles_copy: list[list[list[str]]] = [[cycle.copy() for cycle in cluster] for cluster in cycles]
 
     for i, curr_cluster in enumerate(cycles_copy):
@@ -620,12 +667,15 @@ def optimize_cycles(inst: DataFrame, major_hub: str, cycles: list[list[list[str]
         curr_shake_method: int = 0
         num_shake_methods: int = 3
         hubs_tabu_list: set[str] = set()
+        swaps_tabu_list: set[tuple[str, str]] = set()
+        moves_tabu_list: set[tuple[str, str]] = set()
         while curr_shake_method < num_shake_methods:
             shaken_cycles: list[list[str]]
             shaken_cycles = perform_cluster_shake(inst=inst, cycles=curr_cycles, hubs_tabu_list=hubs_tabu_list,
+                                                  swaps_tabu_list=swaps_tabu_list, moves_tabu_list=moves_tabu_list,
                                                   min_num_points_per_cycle=min_num_points_per_cycle,
                                                   max_num_points_per_cycle=max_num_points_per_cycle,
-                                                  shake_method=curr_shake_method)
+                                                  shake_method=curr_shake_method, random_state=random_state)
             cycles_after_vnd: list[list[str]] = perform_vnd(inst=inst, cycles=shaken_cycles)
             curr_cycles, curr_shake_method = perform_cluster_neighborhood_change_sequential(inst=inst,
                                                                                             major_hub=major_hub,
@@ -650,59 +700,33 @@ def perform_overall_neighborhood_change_sequential(inst: DataFrame, old_major_hu
 
 
 def perform_optimization(inst: DataFrame, major_hub: str, cycles: list[list[list[str]]], min_num_points_per_cycle: int,
-                         max_num_points_per_cycle: int) -> tuple[str, list[str], list[list[list[str]]]]:
-    best_cycles: list[list[list[str]]] = [[cycle.copy() for cycle in cluster] for cluster in cycles]
-
-    # TODO apague isso depois
-    # print(move_point_between_clusters(inst=inst, cycles=best_cycles, min_num_points_per_cycle=min_num_points_per_cycle,
-    #                                   max_num_points_per_cycle=max_num_points_per_cycle))
-    # print(replace_major_hub(inst=inst, old_major_hub=major_hub, major_hub_tabu_list=set(), cycles=cycles,
-    #                         min_num_points_per_cycle=min_num_points_per_cycle,
-    #                         max_num_points_per_cycle=max_num_points_per_cycle))
-    # print(replace_cluster_hub(inst=inst, cycles=cycles[0], hubs_tabu_list=set(),
-    #                           min_num_points_per_cycle=min_num_points_per_cycle,
-    #                           max_num_points_per_cycle=max_num_points_per_cycle))
-    # print(swap_points_between_cycles(inst=inst, cycles=cycles[0]))
-    # print(move_point_between_cycles(inst=inst, cycles=cycles[0], min_num_points_per_cycle=min_num_points_per_cycle,
-    #                                 max_num_points_per_cycle=max_num_points_per_cycle))
-    # print(perform_two_opt(best_cycles[0][0]))
-    # print(perform_three_opt(best_cycles[1][0]))
-    # print(perform_swap(best_cycles[0][0]))
-    # exit(11)
-    # TODO apague isso depois
-
-    initial_cycle_costs: list[list[int]]
-    initial_cluster_costs: list[int]
-    initial_overall_cost: int
-    initial_cycle_costs, initial_cluster_costs, initial_overall_cost = calculate_costs(inst=inst, major_hub=major_hub,
-                                                                                       cycles=best_cycles)
-    print('Custos iniciais')
-    print('Custos por ciclo:', initial_cycle_costs)
-    print('Custos por cluster:', initial_cluster_costs)
-    print('Custo geral:', initial_overall_cost)
-    print()
-
+                         max_num_points_per_cycle: int, random_state: int) -> tuple[
+    str, list[str], list[list[list[str]]]]:
     curr_major_hub: str = major_hub
-    curr_cycles: list[list[list[str]]] = optimize_cycles(inst=inst, major_hub=major_hub, cycles=best_cycles,
+    curr_cycles: list[list[list[str]]] = optimize_cycles(inst=inst, major_hub=major_hub, cycles=cycles,
                                                          min_num_points_per_cycle=min_num_points_per_cycle,
-                                                         max_num_points_per_cycle=max_num_points_per_cycle)
+                                                         max_num_points_per_cycle=max_num_points_per_cycle,
+                                                         random_state=random_state)
 
     curr_shake_method: int = 0
     num_shake_methods: int = 3
     major_hub_tabu_list: set[str] = set()
+    swaps_tabu_list: set[tuple[str, str]] = set()
+    moves_tabu_list: set[tuple[str, str]] = set()
     while curr_shake_method < num_shake_methods:
         new_major_hub: str
         shaken_cycles: list[list[list[str]]]
-        new_major_hub, shaken_cycles = perform_overall_shake(inst=inst, major_hub=major_hub,
+        new_major_hub, shaken_cycles = perform_overall_shake(inst=inst, major_hub=curr_major_hub, cycles=curr_cycles,
                                                              major_hub_tabu_list=major_hub_tabu_list,
-                                                             cycles=curr_cycles,
+                                                             swaps_tabu_list=swaps_tabu_list,
+                                                             moves_tabu_list=moves_tabu_list,
                                                              min_num_points_per_cycle=min_num_points_per_cycle,
                                                              max_num_points_per_cycle=max_num_points_per_cycle,
-                                                             shake_method=curr_shake_method)
+                                                             shake_method=curr_shake_method, random_state=random_state)
         optimized_cycles: list[list[list[str]]]
         optimized_cycles = optimize_cycles(inst=inst, major_hub=new_major_hub, cycles=shaken_cycles,
                                            min_num_points_per_cycle=min_num_points_per_cycle,
-                                           max_num_points_per_cycle=max_num_points_per_cycle)
+                                           max_num_points_per_cycle=max_num_points_per_cycle, random_state=random_state)
         curr_major_hub, curr_cycles, curr_shake_method = perform_overall_neighborhood_change_sequential(inst=inst,
                                                                                                         old_major_hub=curr_major_hub,
                                                                                                         new_major_hub=new_major_hub,
@@ -710,24 +734,4 @@ def perform_optimization(inst: DataFrame, major_hub: str, cycles: list[list[list
                                                                                                         new_cycles=optimized_cycles,
                                                                                                         curr_shake_method=curr_shake_method)
 
-    major_hub = curr_major_hub
-    best_cycles = curr_cycles
-
-    final_cycle_costs: list[list[int]]
-    final_cluster_costs: list[int]
-    final_overall_cost: int
-    final_cycle_costs, final_cluster_costs, final_overall_cost = calculate_costs(inst=inst, major_hub=major_hub,
-                                                                                 cycles=best_cycles)
-    print('Custos finais')
-    print('Custos por ciclo:', final_cycle_costs)
-    print('Custos por cluster:', final_cluster_costs)
-    print('Custo geral:', final_overall_cost)
-    print()
-
-    for i in range(len(final_cluster_costs)):
-        print(f'Porcentagem da diferença de custo do cluster {i}: '
-              f'{(((final_cluster_costs[i] - initial_cluster_costs[i]) / initial_cluster_costs[i]) * 100):.2f} %')
-    print(f'Porcentagem da diferença de custo geral: '
-          f'{(((final_overall_cost - initial_overall_cost) / initial_overall_cost) * 100):.2f} %')
-
-    return major_hub, [cycle[0][0] for cycle in best_cycles], best_cycles
+    return curr_major_hub, [cluster[0][0] for cluster in curr_cycles], curr_cycles

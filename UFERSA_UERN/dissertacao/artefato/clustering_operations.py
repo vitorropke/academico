@@ -31,8 +31,8 @@ def perform_clustering(inst: DataFrame) -> pd.Series:
     return pd.Series(data=(clusters - 1), index=od_matrix_with_population.index)
 
 
-def define_subclusters(inst: DataFrame, min_num_points_per_subcluster: int,
-                       max_num_points_per_subcluster: int) -> pd.Series:
+def define_subclusters(inst: DataFrame, min_num_points_per_subcluster: int, max_num_points_per_subcluster: int,
+                       random_state: int) -> pd.Series:
     # Minimum number of subclusters formula is int(np.ceil(len(inst.index) / max_num_points_per_subcluster))
     # Maximum number of subclusters formula is int(np.floor(len(inst.index) / min_num_points_per_subcluster))
     # Weighted average number of subclusters formula is
@@ -41,14 +41,15 @@ def define_subclusters(inst: DataFrame, min_num_points_per_subcluster: int,
     num_subclusters: int = int(np.floor(len(inst.index) / min_num_points_per_subcluster))
     subclusters: KMeansConstrained = KMeansConstrained(n_clusters=num_subclusters,
                                                        size_min=min_num_points_per_subcluster,
-                                                       size_max=max_num_points_per_subcluster, random_state=42)
+                                                       size_max=max_num_points_per_subcluster,
+                                                       random_state=random_state)
     subclusters.fit_predict(X=inst)
 
     return pd.Series(data=subclusters.labels_, index=inst.index)
 
 
-def perform_subclustering(inst: DataFrame, min_num_points_per_subcluster: int,
-                          max_num_points_per_subcluster: int) -> pd.Series:
+def perform_subclustering(inst: DataFrame, min_num_points_per_subcluster: int, max_num_points_per_subcluster: int,
+                          random_state: int) -> pd.Series:
     print('Fazendo a sub-clusterização.')
 
     od_matrix_with_population_and_cluster: DataFrame = inst.loc[:, inst.index.tolist() + ['population', 'cluster']]
@@ -56,7 +57,7 @@ def perform_subclustering(inst: DataFrame, min_num_points_per_subcluster: int,
     subclusters: list[Series] = [
         define_subclusters(inst=cluster_data.loc[:, cluster_data.index.tolist() + ['population']],
                            min_num_points_per_subcluster=min_num_points_per_subcluster,
-                           max_num_points_per_subcluster=max_num_points_per_subcluster) for _, cluster_data in
-        od_matrix_with_population_and_cluster.groupby(by='cluster')]
+                           max_num_points_per_subcluster=max_num_points_per_subcluster, random_state=random_state) for
+        _, cluster_data in od_matrix_with_population_and_cluster.groupby(by='cluster')]
 
     return pd.concat(objs=subclusters)
