@@ -7,6 +7,7 @@ from clustering_operations import perform_clustering, perform_subclustering
 from connection_operations import find_hubs, create_cycles
 from metaheuristic_operations import perform_optimization, calculate_costs
 from preprocessing_operations import rm_too_close_points, scale_the_data, pop_central_point
+from gtfs_operations import generate_gtfs
 from visualization_operations import generate_interactive_map, generate_static_map, set_colors_for_points, \
     convert_point_names_to_coords
 
@@ -77,6 +78,8 @@ def main(random_state: int) -> None:
     generate_maps(inst=inst, major_hub=final_major_hub, hubs=final_hubs, cycles=final_cycles,
                   filename=f'optimized_solution_{random_state}')
 
+    generate_gtfs(inst=inst, major_hub=final_major_hub, cycles=final_cycles)
+
     end_time: float = time.perf_counter()
 
     with open(file=f'outputs/costs/costs_{random_state}.txt', mode='w') as file:
@@ -126,4 +129,6 @@ def main(random_state: int) -> None:
 
 
 if __name__ == '__main__':
+    for curr_random_state in range(10):
+        main(random_state=curr_random_state)
     main(random_state=42)

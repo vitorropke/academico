@@ -73,8 +73,8 @@ def generate_interactive_map(inst: DataFrame, major_hub: str, hubs: list[tuple[f
 
     for i in range(len(cycles)):
         for j in range(len(cycles[i])):
-            # Select any point on the cycle, except the first or the last, which are the hub. In this case, just the
-            # second.
+            # Select any point on the cycle, except the first or the last, which is the hub.
+            # In this case is the second point of the cycle.
             color: str = colors[cycles[i][j][1]]
             folium.PolyLine(locations=cycles[i][j], color=color).add_to(interactive_map)
     for i in range(len(hubs)):
@@ -92,7 +92,6 @@ def generate_static_map(inst: DataFrame, major_hub: str, hubs: list[tuple[float,
     ax.set_extent(
         extents=(inst['longitude'].min() - 0.01, inst['longitude'].max() + 0.01, inst['latitude'].min() - 0.01,
                  inst['latitude'].max() + 0.01), crs=crs.PlateCarree())
-
     ax.add_image(imagery, 14)
 
     for point, latitude, longitude in zip(inst.index, inst.loc[:, 'latitude'], inst.loc[:, 'longitude']):
@@ -105,4 +104,6 @@ def generate_static_map(inst: DataFrame, major_hub: str, hubs: list[tuple[float,
         else:
             ax.plot(longitude, latitude, color=colors[(latitude, longitude)], linestyle='', marker='o', markersize=1,
                     transform=crs.PlateCarree())
+
     plt.savefig(fname=filepath, bbox_inches='tight', pad_inches=0.0)
+    plt.close(fig=fig)

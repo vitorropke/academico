@@ -115,11 +115,11 @@ def perform_swap(inst: DataFrame, cycle: list[str]) -> list[str]:
 
 
 def perform_local_search(inst: DataFrame, cycle: list[str], local_search_method: int) -> list[str]:
-    if local_search_method == 0:
+    if local_search_method == 2:
         return perform_two_opt(inst=inst, cycle=cycle)
     elif local_search_method == 1:
         return perform_three_opt(inst=inst, cycle=cycle)
-    else:
+    elif local_search_method == 0:
         return perform_swap(inst=inst, cycle=cycle)
 
 
