@@ -1,13 +1,14 @@
 import time
+from pathlib import Path
 
 import pandas as pd
 from pandas import DataFrame, Series
 
 from clustering_operations import perform_clustering, perform_subclustering
 from connection_operations import find_hubs, create_cycles
-from metaheuristic_operations import perform_optimization, calculate_costs
-from preprocessing_operations import rm_too_close_points, scale_the_data, pop_central_point
 from gtfs_operations import generate_gtfs
+from metaheuristic_operations import calculate_costs, perform_optimization
+from preprocessing_operations import rm_too_close_points, scale_the_data, pop_central_point
 from visualization_operations import generate_interactive_map, generate_static_map, set_colors_for_points, \
     convert_point_names_to_coords
 
@@ -21,14 +22,15 @@ def generate_maps(inst: DataFrame, major_hub: str, hubs: list[str], cycles: list
 
     print()
     print('Gerando mapas.')
+    Path(filename).mkdir(parents=True, exist_ok=True)
     generate_interactive_map(inst=inst, major_hub=major_hub, hubs=hub_coords, cycles=cycle_coords, colors=colors,
-                             filepath=f'outputs/maps/interactive_map_{filename}.html')
+                             filepath=f'{filename}/interactive_map.html')
     generate_static_map(inst=inst, major_hub=major_hub, hubs=hub_coords, colors=colors,
-                        filepath=f'outputs/maps/static_map_{filename}.pdf')
+                        filepath=f'{filename}/static_map.pdf')
 
 
 def main(random_state: int) -> None:
-    start_time: float = time.perf_counter()
+    start_time: float = time.process_time()
 
     print('Lendo instância.')
     inst: DataFrame = pd.read_csv(filepath_or_buffer='input/od_matrix.csv', index_col='point')
@@ -62,8 +64,10 @@ def main(random_state: int) -> None:
     initial_hubs: list[str] = find_hubs(inst=inst_without_major_hub)
     initial_cycles: list[list[list[str]]] = create_cycles(inst=inst_without_major_hub, hubs=initial_hubs)
 
+    map_path: str = f'outputs/maps/map_{random_state}'
+
     generate_maps(inst=inst, major_hub=initial_major_hub, hubs=initial_hubs, cycles=initial_cycles,
-                  filename=f'initial_solution_{random_state}')
+                  filename=f'{map_path}/initial_solution')
 
     print()
     print('Otimizando solução.')
@@ -76,12 +80,20 @@ def main(random_state: int) -> None:
                                                                      random_state=random_state)
 
     generate_maps(inst=inst, major_hub=final_major_hub, hubs=final_hubs, cycles=final_cycles,
-                  filename=f'optimized_solution_{random_state}')
+                  filename=f'{map_path}/optimized_solution')
 
-    generate_gtfs(inst=inst, major_hub=final_major_hub, cycles=final_cycles)
+    hub_and_spoke_paths: list[list[str]] = [[cluster[0][0], final_major_hub] for cluster in final_cycles]
+    feeder_trunk_paths: list[list[str]] = [[final_cycles[0][0][0], final_major_hub, final_cycles[2][0][0]],
+                                           [final_cycles[1][0][0], final_major_hub, final_cycles[3][0][0]]]
+    gtfs_path: str = f'outputs/gtfs/gtfs_{random_state}'
+    Path(f'{gtfs_path}/hs').mkdir(parents=True, exist_ok=True)
+    Path(f'{gtfs_path}/ft').mkdir(parents=True, exist_ok=True)
+    generate_gtfs(inst=inst, paths=hub_and_spoke_paths, cycles=final_cycles, out_dir=f'{gtfs_path}/hs')
+    generate_gtfs(inst=inst, paths=feeder_trunk_paths, cycles=final_cycles, out_dir=f'{gtfs_path}/ft')
 
-    end_time: float = time.perf_counter()
+    end_time: float = time.process_time()
 
+    Path('outputs/costs').mkdir(parents=True, exist_ok=True)
     with open(file=f'outputs/costs/costs_{random_state}.txt', mode='w') as file:
         initial_cycle_costs: list[list[int]]
         initial_cluster_costs: list[int]
@@ -108,16 +120,23 @@ def main(random_state: int) -> None:
         costs += f'Custos por cluster: {final_cluster_costs}\n'
         costs += f'Custo geral: {final_overall_cost}\n\n'
 
+        cost_diff: float
         for i in range(len(final_cluster_costs)):
-            costs += (f'Porcentagem de otimização do cluster {i}: '
-                      f'{(((final_cluster_costs[i] - initial_cluster_costs[i]) / initial_cluster_costs[i]) * 100):.2f} %\n')
-        costs += (f'Porcentagem de otimização geral: '
-                  f'{(((final_overall_cost - initial_overall_cost) / initial_overall_cost) * 100):.2f} %\n\n')
+            cost_diff = ((final_cluster_costs[i] - initial_cluster_costs[i]) / initial_cluster_costs[i]) * 100
+            costs += f'Porcentagem de otimização do cluster {i}: {cost_diff:.2f} %\n'
+        cost_diff = ((final_overall_cost - initial_overall_cost) / initial_overall_cost) * 100
+        costs += f'Porcentagem de otimização geral: {cost_diff:.2f} %\n\n'
 
-        costs += f'Tempo de execução: {end_time - start_time} segundos\n'
+        time_diff: int = int(end_time - start_time)
+        costs += f'Tempo de execução: {time_diff} segundos\n'
 
+        pd.DataFrame({'Custo inicial': [initial_overall_cost], 'Custo final': [final_overall_cost],
+                      'Diferença de custo (%)': [f'{cost_diff:.2f}'],
+                      'Tempo de execução (segundos)': [time_diff]}).to_csv(
+            path_or_buf=f'outputs/costs/cost_{random_state}.csv', index=False)
         file.write(costs)
 
+    Path('outputs/solutions').mkdir(parents=True, exist_ok=True)
     with open(file=f'outputs/solutions/solutions_{random_state}.txt', mode='w') as file:
         solutions: str = ''
 
