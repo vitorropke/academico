@@ -9,15 +9,20 @@ from connection_operations import calculate_cycle_cost
 def perform_two_opt(inst: DataFrame, cycle: list[str]) -> list[str]:
     print('Fazendo o 2-opt.')
 
+    cycle_copy: list[str] = cycle.copy()
     best_cycle: list[str] = cycle.copy()
 
-    curr_cycle: list[str] = best_cycle.copy()
     best_cost: int = calculate_cycle_cost(inst=inst, cycle=best_cycle)
     num_points: int = len(best_cycle)
     # Starts at 1(i) and ends at n-1(j) so as not to modify the hub.
     for i in range(1, num_points - 2):
         for j in range(i + 1, num_points - 1):
-            curr_cycle.insert(i, curr_cycle.pop(j))
+            segment1: list[str] = cycle_copy[:i]
+            segment2: list[str] = cycle_copy[i:j]
+            segment3: list[str] = cycle_copy[j:]
+
+            # segment 1 + segment 2 (reversed) + segment 3
+            curr_cycle: list[str] = segment1 + segment2[::-1] + segment3
             curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
             if curr_cost < best_cost:
                 best_cycle = curr_cycle.copy()
@@ -42,49 +47,27 @@ def perform_three_opt(inst: DataFrame, cycle: list[str]) -> list[str]:
                 segment3: list[str] = cycle_copy[j:k]
                 segment4: list[str] = cycle_copy[k:]
 
-                curr_cycle: list[str]
+                curr_cycles: list[list[str]] = [[] for _ in range(7)]
 
                 # segment 1 + segment 2 (reversed) + segment 3 + segment 4
-                curr_cycle = segment1 + segment2[::-1] + segment3 + segment4
-                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
-                if curr_cost < initial_cost:
-                    return curr_cycle
-
+                curr_cycles[0] = segment1 + segment2[::-1] + segment3 + segment4
                 # segment 1 + segment 2 + segment 3 (reversed) + segment 4
-                curr_cycle = segment1 + segment2 + segment3[::-1] + segment4
-                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
-                if curr_cost < initial_cost:
-                    return curr_cycle
-
+                curr_cycles[1] = segment1 + segment2 + segment3[::-1] + segment4
                 # segment 1 + segment 2 (reversed) + segment 3 (reversed) + segment 4
-                curr_cycle = segment1 + segment2[::-1] + segment3[::-1] + segment4
-                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
-                if curr_cost < initial_cost:
-                    return curr_cycle
-
+                curr_cycles[2] = segment1 + segment2[::-1] + segment3[::-1] + segment4
                 # segment 1 + segment 3 + segment 2 + segment 4
-                curr_cycle = segment1 + segment3 + segment2 + segment4
-                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
-                if curr_cost < initial_cost:
-                    return curr_cycle
-
+                curr_cycles[3] = segment1 + segment3 + segment2 + segment4
                 # segment 1 + segment 3 (reversed) + segment 2 + segment 4
-                curr_cycle = segment1 + segment3[::-1] + segment2 + segment4
-                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
-                if curr_cost < initial_cost:
-                    return curr_cycle
-
+                curr_cycles[4] = segment1 + segment3[::-1] + segment2 + segment4
                 # segment 1 + segment 3 + segment 2 (reversed) + segment 4
-                curr_cycle = segment1 + segment3 + segment2[::-1] + segment4
-                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
-                if curr_cost < initial_cost:
-                    return curr_cycle
-
+                curr_cycles[5] = segment1 + segment3 + segment2[::-1] + segment4
                 # segment 1 + segment 3 (reversed) + segment 2 (reversed) + segment 4
-                curr_cycle = segment1 + segment3[::-1] + segment2[::-1] + segment4
-                curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
-                if curr_cost < initial_cost:
-                    return curr_cycle
+                curr_cycles[6] = segment1 + segment3[::-1] + segment2[::-1] + segment4
+
+                for curr_cycle in curr_cycles:
+                    curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
+                    if curr_cost < initial_cost:
+                        return curr_cycle
 
     return cycle_copy
 
@@ -92,24 +75,22 @@ def perform_three_opt(inst: DataFrame, cycle: list[str]) -> list[str]:
 def perform_swap(inst: DataFrame, cycle: list[str]) -> list[str]:
     print('Fazendo o swap.')
 
+    cycle_copy: list[str] = cycle.copy()
     best_cycle: list[str] = cycle.copy()
 
-    curr_cycle: list[str] = best_cycle.copy()
     best_cost: int = calculate_cycle_cost(inst=inst, cycle=best_cycle)
     num_points: int = len(best_cycle)
     # Starts at 1(i) and ends at n-1(j) so as not to modify the hub.
     for i in range(1, num_points - 2):
         for j in range(i + 1, num_points - 1):
-            # Swap is always performed over the initial cycle. Therefore, the swap is done and then undone before the
-            # next iteration.
+            curr_cycle: list[str] = cycle_copy.copy()
+
             # Do the swap.
             curr_cycle[i], curr_cycle[j] = curr_cycle[j], curr_cycle[i]
             curr_cost: int = calculate_cycle_cost(inst=inst, cycle=curr_cycle)
             if curr_cost < best_cost:
                 best_cycle = curr_cycle.copy()
                 best_cost = curr_cost
-            # Undo the swap.
-            curr_cycle[i], curr_cycle[j] = curr_cycle[j], curr_cycle[i]
 
     return best_cycle
 
@@ -118,9 +99,9 @@ def perform_local_search(inst: DataFrame, cycle: list[str], local_search_method:
     if local_search_method == 0:
         return perform_two_opt(inst=inst, cycle=cycle)
     elif local_search_method == 1:
-        return perform_three_opt(inst=inst, cycle=cycle)
-    elif local_search_method == 2:
         return perform_swap(inst=inst, cycle=cycle)
+    else:
+        return perform_three_opt(inst=inst, cycle=cycle)
 
 
 def perform_vnd_neighborhood_change_sequential(inst: DataFrame, old_cycle: list[str], new_cycle: list[str],
@@ -385,16 +366,16 @@ def perform_cluster_shake(inst: DataFrame, cycles: list[list[str]], hubs_tabu_li
     print('Fazendo o shake do cluster.')
 
     if shake_method == 0:
-        return replace_cluster_hub(inst=inst, cycles=cycles, hubs_tabu_list=hubs_tabu_list,
-                                   min_num_points_per_cycle=min_num_points_per_cycle,
-                                   max_num_points_per_cycle=max_num_points_per_cycle, random_state=random_state)
-    elif shake_method == 1:
-        return swap_points_between_cycles(inst=inst, cycles=cycles, swaps_tabu_list=swaps_tabu_list,
-                                          random_state=random_state)
-    else:
         return move_point_between_cycles(inst=inst, cycles=cycles, moves_tabu_list=moves_tabu_list,
                                          min_num_points_per_cycle=min_num_points_per_cycle,
                                          max_num_points_per_cycle=max_num_points_per_cycle, random_state=random_state)
+    elif shake_method == 1:
+        return replace_cluster_hub(inst=inst, cycles=cycles, hubs_tabu_list=hubs_tabu_list,
+                                   min_num_points_per_cycle=min_num_points_per_cycle,
+                                   max_num_points_per_cycle=max_num_points_per_cycle, random_state=random_state)
+    else:
+        return swap_points_between_cycles(inst=inst, cycles=cycles, swaps_tabu_list=swaps_tabu_list,
+                                          random_state=random_state)
 
 
 def replace_major_hub(inst: DataFrame, old_major_hub: str, cycles: list[list[list[str]]], major_hub_tabu_list: set[str],
@@ -616,7 +597,7 @@ def perform_overall_shake(inst: DataFrame, major_hub: str, cycles: list[list[lis
                           random_state: int) -> tuple[str, list[list[list[str]]]]:
     print('Fazendo o shake geral.')
 
-    if shake_method == 0:
+    if shake_method == 2:
         return replace_major_hub(inst=inst, old_major_hub=major_hub, cycles=cycles,
                                  major_hub_tabu_list=major_hub_tabu_list,
                                  min_num_points_per_cycle=min_num_points_per_cycle,
@@ -624,7 +605,7 @@ def perform_overall_shake(inst: DataFrame, major_hub: str, cycles: list[list[lis
     elif shake_method == 1:
         return major_hub, swap_points_between_clusters(inst=inst, cycles=cycles, swaps_tabu_list=swaps_tabu_list,
                                                        random_state=random_state)
-    else:
+    elif shake_method == 0:
         return major_hub, move_point_between_clusters(inst=inst, cycles=cycles, moves_tabu_list=moves_tabu_list,
                                                       min_num_points_per_cycle=min_num_points_per_cycle,
                                                       max_num_points_per_cycle=max_num_points_per_cycle,

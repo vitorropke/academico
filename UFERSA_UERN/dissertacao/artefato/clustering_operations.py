@@ -13,14 +13,23 @@ def perform_clustering(inst: DataFrame) -> pd.Series:
 
     linkage_matrix: np.ndarray[np.ndarray[np.float64]] = linkage(y=od_matrix_with_population, method='ward')
 
-    # Show dendrogram.
-    plt.figure()
-    # Complete dendrogram.
-    dendrogram(Z=linkage_matrix, color_threshold=0.0)
-    # Partial dendrogram.
-    # dendrogram(Z=linkage_matrix, p=4, truncate_mode='lastp', color_threshold=0.0)
-    # plt.show(block=False)
-    # plt.pause(interval=4)
+    # Show or save dendrograms.
+    file_names: list[str] = ['dendrograma-completo', 'dendrograma-parcial']
+    for i in range(2):
+        fig = plt.figure(figsize=(6.4, 4.8))
+        fig.subplots_adjust(bottom=0.10, top=0.95, left=0.10, right=0.95)
+        plt.ylabel('Distância')
+        if i == 0:
+            # Complete dendrogram.
+            dendrogram(Z=linkage_matrix, color_threshold=0.0, no_labels=True)
+            plt.xlabel('Parada ou cluster')
+        else:
+            # Partial dendrogram.
+            dendrogram(Z=linkage_matrix, p=4, truncate_mode='lastp', color_threshold=0.0)
+            plt.xlabel('Número de paradas')
+
+        # plt.savefig(fname=f'{file_names[i]}.pdf')
+        plt.close()
 
     # Define the clusters.
     # num_clusters: int = int(input('Digite o número de clusters desejado: '))
@@ -33,11 +42,6 @@ def perform_clustering(inst: DataFrame) -> pd.Series:
 
 def define_subclusters(inst: DataFrame, min_num_points_per_subcluster: int, max_num_points_per_subcluster: int,
                        random_state: int) -> pd.Series:
-    # Minimum number of subclusters formula is int(np.ceil(len(inst.index) / max_num_points_per_subcluster))
-    # Maximum number of subclusters formula is int(np.floor(len(inst.index) / min_num_points_per_subcluster))
-    # Weighted average number of subclusters formula is
-    # int(np.round(len(inst.index) / ((min_num_points_per_subcluster + max_num_points_per_subcluster) / 2)))
-
     num_subclusters: int = int(np.floor(len(inst.index) / min_num_points_per_subcluster))
     subclusters: KMeansConstrained = KMeansConstrained(n_clusters=num_subclusters,
                                                        size_min=min_num_points_per_subcluster,

@@ -32,28 +32,46 @@ def generate_routes_trips_stop_times(inst: DataFrame, route_id: str, agency_id: 
     trips: list[dict[str, str]] = []
     stop_times: list[dict[str, str | int]] = []
 
-    current_time: datetime = datetime.strptime(start_time, '%H:%M:%S')
-    while current_time < datetime.strptime(end_time, '%H:%M:%S'):
-        trip_id_with_time: str = f'{trip_id}_{current_time.strftime(format='%H:%M:%S')}'
+    # Calculate all intervals between stops.
+    # formula t = d / s
+    # time (seconds) = distance (meters) / speed (meters per second)
+    bus_speed: float = 4.6
+    stop_intervals: list[int] = [int(inst.at[orig, dest] // bus_speed) for (orig, dest) in zip(walk, walk[1:])]
+    trip_duration: int = sum(stop_intervals)
 
-        # trips.txt
-        trips.append({'route_id': route_id, 'service_id': service_id, 'trip_id': trip_id_with_time})
+    # Calculate the number of buses needed to maintain an interval between trips of less than 41 minutes (2460 seconds).
+    # This code -(a // -b) performs ceiling division.
+    # https://stackoverflow.com/questions/14822184/is-there-a-ceiling-equivalent-of-operator-in-python
+    acceptable_trip_interval: int = 2460
+    num_buses: int = -(trip_duration // -acceptable_trip_interval)
+    print(f'Número de ônibus no {route_short_name}: {num_buses} ônibus')
 
-        # stop_times.txt
-        gtfs_time: str = calculate_gtfs_time(current_time=current_time)
-        stop_times.append(
-            {'trip_id': trip_id_with_time, 'arrival_time': gtfs_time, 'departure_time': gtfs_time, 'stop_id': walk[0],
-             'stop_sequence': 1})
-        for i, (orig, dest) in enumerate(zip(walk, walk[1:]), start=2):
-            # formula t = d / s
-            # time (seconds) = distance (meters) / speed (meters per second)
-            bus_speed: float = 4.6
-            current_time += timedelta(seconds=inst.at[orig, dest] // bus_speed)
+    # Calculate the start time for each bus.
+    start_times: list[str] = ['' for _ in range(num_buses)]
+    curr_start_time_datetime: datetime = datetime.strptime(start_time, '%H:%M:%S')
+    buses_interval: int = trip_duration // num_buses
+    for i in range(num_buses):
+        start_times[i] = calculate_gtfs_time(current_time=curr_start_time_datetime)
+        curr_start_time_datetime += timedelta(seconds=buses_interval)
 
-            gtfs_time = calculate_gtfs_time(current_time=current_time)
-            stop_times.append(
-                {'trip_id': trip_id_with_time, 'arrival_time': gtfs_time, 'departure_time': gtfs_time, 'stop_id': dest,
-                 'stop_sequence': i})
+    # trips.txt and stop_times.txt
+    for curr_start_time in start_times:
+        curr_time: datetime = datetime.strptime(curr_start_time, '%H:%M:%S')
+        while curr_time < datetime.strptime(end_time, '%H:%M:%S'):
+            trip_id_with_time: str = f'{trip_id}_{curr_time.strftime(format='%H:%M:%S')}'
+
+            # trips.txt
+            trips.append({'route_id': route_id, 'service_id': service_id, 'trip_id': trip_id_with_time})
+
+            # stop_times.txt
+            gtfs_time: str = calculate_gtfs_time(current_time=curr_time)
+            stop_times.append({'trip_id': trip_id_with_time, 'arrival_time': gtfs_time, 'departure_time': gtfs_time,
+                               'stop_id': walk[0], 'stop_sequence': 1})
+            for i, (curr_interval, curr_stop) in enumerate(zip(stop_intervals, walk[1:]), start=2):
+                curr_time += timedelta(seconds=curr_interval)
+                gtfs_time = calculate_gtfs_time(current_time=curr_time)
+                stop_times.append({'trip_id': trip_id_with_time, 'arrival_time': gtfs_time, 'departure_time': gtfs_time,
+                                   'stop_id': curr_stop, 'stop_sequence': i})
 
     return route, trips, stop_times
 
@@ -92,7 +110,7 @@ def generate_gtfs(inst: DataFrame, paths: list[list[str]], cycles: list[list[lis
                                                                                index=False)
 
     # routes.txt, trips.txt and stop_times.txt
-    routes: list[dict[str, str]] = []
+    routes: list[dict[str, str | int]] = []
     trips: list[dict[str, str]] = []
     stop_times: list[dict[str, str]] = []
 

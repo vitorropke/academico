@@ -46,17 +46,17 @@ def set_colors_for_points(cycles: list[list[list[tuple[float, float]]]]) -> dict
     return colors
 
 
-def get_icon(point: str, latitude: float, longitude: float, major_hub: str, hubs: list[tuple[float, float]],
+def get_icon(point: str, lat: float, lon: float, major_hub: str, hubs: list[tuple[float, float]],
              colors: dict[tuple[float, float], str]) -> Icon | CustomIcon:
     if point == major_hub:
         return folium.CustomIcon(icon_image='https://static.thenounproject.com/png/hub-icon-2367012-512.png',
                                  icon_size=(50, 50))
-    elif (latitude, longitude) in hubs:
+    elif (lat, lon) in hubs:
         return folium.CustomIcon(
             icon_image='https://upload.wikimedia.org/wikipedia/commons/9/90/Simbolo_autostazione_-_1979.svg',
             icon_size=(50, 50))
     else:
-        return folium.Icon(icon_color=colors[(latitude, longitude)], icon='bus-simple', prefix='fa')
+        return folium.Icon(icon_color=colors[(lat, lon)], icon='bus-simple', prefix='fa')
 
 
 def generate_interactive_map(inst: DataFrame, major_hub: str, hubs: list[tuple[float, float]],
@@ -66,9 +66,9 @@ def generate_interactive_map(inst: DataFrame, major_hub: str, hubs: list[tuple[f
             inst.loc[:, 'longitude'].max() + inst.loc[:, 'longitude'].min()) / 2.0), tiles='CartoDB Positron',
                                       zoom_start=13, control_scale=True)
 
-    for point, latitude, longitude in zip(inst.index, inst.loc[:, 'latitude'], inst.loc[:, 'longitude']):
-        folium.Marker(location=(latitude, longitude), tooltip=point,
-                      icon=get_icon(point=point, latitude=latitude, longitude=longitude, major_hub=major_hub, hubs=hubs,
+    for point, lat, lon in zip(inst.index, inst.loc[:, 'latitude'], inst.loc[:, 'longitude']):
+        folium.Marker(location=(lat, lon), tooltip=point,
+                      icon=get_icon(point=point, lat=lat, lon=lon, major_hub=major_hub, hubs=hubs,
                                     colors=colors)).add_to(parent=interactive_map)
 
     for i in range(len(cycles)):
@@ -81,29 +81,59 @@ def generate_interactive_map(inst: DataFrame, major_hub: str, hubs: list[tuple[f
         folium.PolyLine(locations=(hubs[i], (inst.loc[major_hub, 'latitude'], inst.loc[major_hub, 'longitude'])),
                         color='grey', weight=8).add_to(interactive_map)
 
-    interactive_map.save(outfile=filepath)
+    interactive_map.save(outfile=f'{filepath}.html')
+
+
+def plot_points(inst: DataFrame, major_hub: str, hubs: list[tuple[float, float]],
+                colors: dict[tuple[float, float], str], ax: GeoAxes) -> None:
+    for point, lat, lon in zip(inst.index, inst.loc[:, 'latitude'], inst.loc[:, 'longitude']):
+        if point == major_hub:
+            ax.plot(lon, lat, color='black', linestyle='', marker='*', markersize=8, transform=crs.PlateCarree())
+        elif (lat, lon) in hubs:
+            ax.plot(lon, lat, color='black', linestyle='', marker='P', markersize=5, transform=crs.PlateCarree())
+        else:
+            ax.plot(lon, lat, color=colors[(lat, lon)], linestyle='', marker='o', markersize=1,
+                    transform=crs.PlateCarree())
+
+
+def plot_routes(inst: DataFrame, major_hub: str, hubs: list[tuple[float, float]],
+                cycles: list[list[list[tuple[float, float]]]], colors: dict[tuple[float, float], str],
+                ax: GeoAxes) -> None:
+    for i in range(len(cycles)):
+        for j in range(len(cycles[i])):
+            # Select any point on the cycle, except the first or the last, which is the hub.
+            # In this case is the second point of the cycle.
+            color: str = colors[cycles[i][j][1]]
+            for orig, dest in zip(cycles[i][j], cycles[i][j][1:]):
+                lon: list[float, float] = [orig[1], dest[1]]
+                lat: list[float, float] = [orig[0], dest[0]]
+                ax.plot(lon, lat, color=color, linewidth=1, transform=crs.PlateCarree())
+    for i in range(len(hubs)):
+        lon: list[float, float] = [hubs[i][1], inst.loc[major_hub, 'longitude']]
+        lat: list[float, float] = [hubs[i][0], inst.loc[major_hub, 'latitude']]
+        ax.plot(lon, lat, color='grey', linewidth=3, transform=crs.PlateCarree())
 
 
 def generate_static_map(inst: DataFrame, major_hub: str, hubs: list[tuple[float, float]],
-                        colors: dict[tuple[float, float], str], filepath: str) -> None:
-    imagery: OSM = OSM()
-    fig: Figure = plt.figure()
-    ax: GeoAxes = fig.add_subplot(projection=imagery.crs)
-    ax.set_extent(
-        extents=(inst['longitude'].min() - 0.01, inst['longitude'].max() + 0.01, inst['latitude'].min() - 0.01,
-                 inst['latitude'].max() + 0.01), crs=crs.PlateCarree())
-    ax.add_image(imagery, 14)
+                        cycles: list[list[list[tuple[float, float]]]], colors: dict[tuple[float, float], str],
+                        filepath: str) -> None:
+    filepaths: list[str] = [f'{filepath}_points', f'{filepath}_routes', filepath]
+    for i in range(3):
+        imagery: OSM = OSM()
+        fig: Figure = plt.figure()
+        ax: GeoAxes = fig.add_subplot(projection=imagery.crs)
+        ax.set_extent(
+            extents=(inst['longitude'].min() - 0.01, inst['longitude'].max() + 0.01, inst['latitude'].min() - 0.01,
+                     inst['latitude'].max() + 0.01), crs=crs.PlateCarree())
+        ax.add_image(imagery, 14)
 
-    for point, latitude, longitude in zip(inst.index, inst.loc[:, 'latitude'], inst.loc[:, 'longitude']):
-        if point == major_hub:
-            ax.plot(longitude, latitude, color='black', linestyle='', marker='*', markersize=5,
-                    transform=crs.PlateCarree())
-        elif (latitude, longitude) in hubs:
-            ax.plot(longitude, latitude, color='black', linestyle='', marker='P', markersize=3,
-                    transform=crs.PlateCarree())
+        if i == 0:
+            plot_points(inst=inst, major_hub=major_hub, hubs=hubs, colors=colors, ax=ax)
+        elif i == 1:
+            plot_routes(inst=inst, major_hub=major_hub, hubs=hubs, cycles=cycles, colors=colors, ax=ax)
         else:
-            ax.plot(longitude, latitude, color=colors[(latitude, longitude)], linestyle='', marker='o', markersize=1,
-                    transform=crs.PlateCarree())
+            plot_points(inst=inst, major_hub=major_hub, hubs=hubs, colors=colors, ax=ax)
+            plot_routes(inst=inst, major_hub=major_hub, hubs=hubs, cycles=cycles, colors=colors, ax=ax)
 
-    plt.savefig(fname=filepath, bbox_inches='tight', pad_inches=0.0)
-    plt.close(fig=fig)
+        plt.savefig(fname=f'{filepaths[i]}.pdf', bbox_inches='tight', pad_inches=0.0)
+        plt.close(fig=fig)
